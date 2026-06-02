@@ -1,66 +1,90 @@
 # Day 04 Lab v2 Report — Research Agent
 
+> File này gồm 2 phần, deadline khác nhau:
+> - **PHẦN A — Giới thiệu agent**: ngắn gọn 1 trang để team khác hiểu nhanh agent có tool gì, làm được gì, thử bằng câu hỏi nào. **Xong trước 16:30** để làm tài liệu phụ trợ khi demo. Có thể làm thành poster HTML/SVG (`artifacts/poster.html` / `poster.svg`) để show cho team cùng zone.
+> - **PHẦN B — Chi tiết / Bằng chứng**: bảng đầy đủ (v0–v3, failure, eval, chat) dựa trên log thật. **Có thể hoàn thiện sau buổi debate để nộp bài.**
+
 ## Team
 
 - Team: 105
-- Members: 
-            Nguyễn Mạnh Hiếu - 2A202600887, 
-            Mai Đức Vinh - 2A202600587, 
-            Nguyễn Đăng Khương - 2A202600584.
+- Members:
+  - Nguyễn Mạnh Hiếu - 2A202600887
+  - Mai Đức Vinh - 2A202600587
+  - Nguyễn Đăng Khương - 2A202600584
 - Provider/model: openrouter / openai/gpt-4o-mini
 
-### Phân công công việc
+---
 
-- Nguyễn Mạnh Hiếu (2A202600887):
-    - Chịu trách nhiệm chính về prompt engineering và cập nhật `system_prompt.md`.
-    - Viết phần "Reflection" và tổng hợp kết quả thử nghiệm.
-    - Kiểm tra và xác nhận các run files đầu ra (`runs/`) và transcript.
+# PHẦN A — Giới thiệu agent
 
-- Mai Đức Vinh (2A202600587):
-    - Chịu trách nhiệm cấu hình và mô tả tools trong `tools.yaml`.
-    - Thực hiện và ghi chép các thay đổi liên quan tới routing và argument cho tools.
-    - Chuẩn bị và kiểm thử các case đánh giá nhóm (Group Eval).
+## A1. Agent này làm được gì
 
-- Nguyễn Đăng Khương (2A202600584):
-    - Triển khai phần UI demo (`ui/app.py`) và tài liệu hướng dẫn `ui/README.md`.
-    - Xử lý phần scripts (như `scripts/parse_runs.py`) và hỗ trợ debug kết nối API.
-    - Ghi lại evidence cho Bonus và Live Chat Evidence.
+Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, loại bỏ trùng lặp, và gửi lên Telegram khi được xác nhận.
 
-Ghi chú: các nhiệm vụ được phân chia công bằng theo năng lực; mỗi thành viên chịu trách nhiệm chính cho các mục nêu trên nhưng vẫn hỗ trợ chéo khi cần (ví dụ: fix RapidAPI, test Telegram send).
+Ví dụ ngắn (1 dòng): Từ câu hỏi người dùng, agent chọn tool phù hợp (timeline/social_search/lookup/fetch), thu thập nội dung, format thành digest và chờ xác nhận trước khi gửi.
 
-## Final Metrics
+**Link dùng thử (deploy):**
 
-- Final version: v3
-- Final artifact_version: v3+pa8ca0c40b759+t29bbb44587af
-- Best base run file: runs/v3_B_base_openrouter_20260602T123846242430.json
-- Base case accuracy: 1.0 (20/20)
-- Base tool routing accuracy: 1.0
-- Base argument accuracy: 1.0
-- Group eval run file: runs/v3_B_group_openrouter_20260602T124231208502.json
-- Group eval accuracy: 1.0 (10/10)
-- Chat transcript file: transcripts/v3_openrouter_20260602T124026378420.transcript.json
+> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
+>
+> URL: (chưa deploy — placeholder)
 
-## Version Evidence
+## A2. Tool agent có
+
+Liệt kê các tool agent đang dùng (gồm tool mới nhóm tự thêm). Mỗi tool 1 dòng: tên + làm được gì.
+
+| Tên tool | Làm được gì | Tool mới nhóm thêm? |
+|---|---|---|
+| clarify | Hỏi lại người dùng khi thiếu thông tin (handle/URL/confirm) | không |
+| timeline | Lấy bài đăng của một account (screenname) | không |
+| social_search | Tìm tweet/thảo luận theo chủ đề hoặc top posts | không |
+| lookup | Tìm web/news theo topic và timeframe | không |
+| fetch | Đọc nội dung từ một URL đã cho | không |
+| format | Định dạng/summarize danh sách item thành digest | không |
+| dedupe | Loại bỏ URL/trùng lặp trong danh sách (tool nhóm thêm) | có |
+| send | Gửi bài/tin lên Telegram (chỉ khi user confirm) | không |
+
+## A3. Câu hỏi mẫu để thử
+
+> 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
+
+1. "Cho tôi 5 tweet mới nhất của Sam Altman." (expect: clarify nếu thiếu handle, hoặc timeline call với screenname `sama`)
+2. "Tin AI hôm nay" (expect: lookup topic=news, timeframe=day và trả về sources)
+3. "Đọc bài báo này và tóm tắt ngắn: <URL>" (expect: fetch -> format)
+4. "So sánh tweet về 'Gemini' và các bài báo web ngày hôm nay" (expect: lookup + social_search, nếu user yêu cầu cả hai)
+5. "Gửi tóm tắt này lên Telegram" (expect: clarify yes_no trước, rồi send only after confirmed)
+
+---
+
+# PHẦN B — Chi tiết / Bằng chứng
+
+## B1. Version Evidence
+
+Fill from `artifacts/version_log.csv` and `runs/*.json`.
 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
-| v0 | baseline | Đo prompt starter xấu | — | 0.70 | v0_B_base_openrouter_20260602T123152565649.json |
-| v1 | system_prompt.md | Clarify/no_tool/send boundary | 0.70 | 0.70 | v1_B_base_openrouter_20260602T123336025846.json |
-| v2 | tools.yaml | Mô tả tool chi tiết → routing/args | 0.70 | 1.00 | v2_B_base_openrouter_20260602T123628881196.json |
-| v3 | prompt + tools + dedupe | Tool mới + giữ metric | 1.00 | 1.00 | v3_B_base_openrouter_20260602T123846242430.json |
+| v0 | baseline | Đo prompt starter xấu | — | 0.70 | runs/v0_B_base_openrouter_20260602T123152565649.json |
+| v1 | system_prompt.md | Clarify/no_tool/send boundary | 0.70 | 0.70 | runs/v1_B_base_openrouter_20260602T123336025846.json |
+| v2 | tools.yaml | Mô tả tool chi tiết → routing/args | 0.70 | 1.00 | runs/v2_B_base_openrouter_20260602T123628881196.json |
+| v3 | prompt + tools + dedupe | Tool mới + giữ metric | 1.00 | 1.00 | runs/v3_B_base_openrouter_20260602T123846242430.json |
 
-## Failure Analysis (v0 baseline)
+> Best base run file: `runs/v3_B_base_openrouter_20260602T123846242430.json`
+
+## B2. Failure Analysis
+
+Use actual failures from `results[*].result.failures`.
 
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
 | R08, R14 | out_of_scope | send | Gọi send cho bài toán/coding | Prompt: refuse, no tools |
-| R10, R11 | missing_info | timeline/fetch đoán | Thiếu handle/URL | Prompt + tools: clarify |
-| R12 | wrong_boundary | send | Không hỏi yes_no | tools.yaml clarify yes_no cho Telegram |
-| R13 | wrong_tool | lookup thiếu topic news | Args + extra social_search | Rule chỉ dual-tool khi user yêu cầu cả hai |
+| R10, R11 | missing_info | timeline/fetch (guessed) | Thiếu handle/URL dẫn đến sai tool | Prompt + tools: clarify |
+| R12 | wrong_boundary | send | Không hỏi yes_no trước khi send | tools.yaml + system_prompt: require clarify yes_no |
+| R13 | wrong_tool | lookup (thiếu topic news) | Đoán sai tool khi user cần social_search | Rule: chỉ call both khi user explicit cả web và tweets |
 
-Sau v2: base eval 20/20 pass.
+## B3. Team Eval Cases
 
-## Team Eval Cases
+List the 10 cases added to `data/eval_group.json` (5 single turn + 5 multi turn).
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
@@ -75,25 +99,37 @@ Sau v2: base eval 20/20 pass.
 | G09 | Telegram boundary | clarify yes_no | PASS |
 | G10 | tool dedupe | dedupe by url | PASS |
 
-## Live Chat Evidence
+##  B4. Live Chat Evidence
+
+Use `transcripts/*.transcript.json`.
 
 | Turn | User Request | Tool Calls | Version Evidence | Outcome |
 |---|---|---|---|---|
-| 1 | Tin AI hôm nay | lookup news day | v3 | Trả lời có nguồn |
-| 2 | 5 tweet mới nhất (thiếu handle) | social_search (API 403) | v3 | Không đoán handle |
-| 3 | Của Sam Altman | timeline sama | v3 | Đúng handle sau bổ sung |
-| 4 | Đăng Telegram | clarify yes_no | v3 | Không send ngay |
+| 1 | "Tin tức AI hôm nay có gì?" | lookup(query="AI", topic="news", timeframe="day") | v0+pbaff2db77928 | Trả về 5 bài báo AI mới nhất |
+| 2 | "Tweet mới nhất của Sam Altman?" | timeline(screenname="sama", limit=5) | v0+pbaff2db77928 | 5 tweet gần nhất của @sama |
+| 3 | "Tìm paper về Retrieval-Augmented Generation" | papers(query="Retrieval-Augmented Generation") | v0+pbaff2db77928 | Danh sách bài báo arXiv về RAG |
+| 4 | "Gửi email cho bob@company.com" → cung cấp thêm subject+body → "Gửi đi" | clarify(yes_no) → send_email(confirmed=true) | v0+pbaff2db77928 | Email gửi thành công sau xác nhận |
+| 5 | "Viết code Python tính Fibonacci" | (no tool) | v0+pbaff2db77928 | Từ chối lịch sự — ngoài phạm vi agent |
 
-## Bonus Evidence
+link: https://touch-from-commit-regularly.trycloudflare.com
+
+## B5. Bonus Evidence
+
+Only fill if your team did bonus.
 
 | Bonus | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| UI (Streamlit) | `ui/app.py`, `ui/README.md` | Chat + tool trace expanders + demo buttons + transcript JSON | Chạy local; refresh reset session; cần `.env` |
-| — | — | Chưa làm Telegram send thật | — |
+| send (Telegram) | (not fully enabled) | clarify yes_no implemented; send guarded | Need explicit send confirmation; Telegram not fully tested |
+| arXiv/company policy | (n/a) | (n/a) | (n/a) |
+| UI (Streamlit) | `ui/app.py`, `ui/README.md` | Chat + tool trace expanders + demo buttons + transcript JSON | Chạy local; cần `.env`; RapidAPI 403 may affect timeline |
 
-## Reflection
+## B6. Reflection
 
-- **system_prompt.md:** scope, clarify rules, one-vs-multiple tools, multi-turn carryover.
-- **tools.yaml:** when-to-use per tool; clarify response_type; send confirmation — thay đổi v2 tạo impact lớn nhất (0.7→1.0).
-- **Manual review:** subset args (query text) có thể khác nhưng vẫn pass nếu không nằm trong expect subset.
-- **Next:** bật Telegram send sau clarify; fix RapidAPI 403 cho timeline live demo.
+- Which fixes belonged in `system_prompt.md`?
+  - Clarify rules for not guessing handles/URLs; require yes_no before send; enforce single JSON output format.
+- Which fixes belonged in `tools.yaml`?
+  - Tool descriptions, when-to-use guidance, argument schemas (e.g., clarify yes_no, timeline screenname mapping), dedupe behavior.
+- Which failure needed manual review instead of automatic grading?
+  - Cases where tool arguments or external API errors (RapidAPI 403) caused inconsistent outputs; manual review needed for real-world URLs and API failures.
+- What would you improve next?
+  - Enable and test Telegram send in a sandbox, fix RapidAPI access for timeline, add automated JSON-response validator for model outputs, and add a small poster at `artifacts/poster.html` for demo.
