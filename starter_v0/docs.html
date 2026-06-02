@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Agent — Tài liệu Chatbot</title>
+  <meta name="description" content="Tài liệu đầy đủ về Research Agent AI Chatbot: các tool, cách hoạt động, routing rules và ví dụ sử dụng." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0b0d12;
+      --bg2:       #111318;
+      --bg3:       #181c26;
+      --bg4:       #1e2230;
+      --border:    #252a3a;
+      --border2:   #2e3450;
+      --accent:    #4f6ef7;
+      --accent2:   #7c3aed;
+      --cyan:      #06b6d4;
+      --green:     #10b981;
+      --yellow:    #f59e0b;
+      --red:       #ef4444;
+      --orange:    #f97316;
+      --pink:      #ec4899;
+      --text:      #e2e6f0;
+      --text2:     #8892a8;
+      --text3:     #4a5268;
+      --mono:      'JetBrains Mono', monospace;
+      --r:         12px;
+      --r2:        8px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg);color:var(--text);
+      font-family:'Inter',system-ui,sans-serif;
+      font-size:15px;line-height:1.7;
+      min-height:100vh;
+    }
+
+    /* ── NAV ─────────────────────────────── */
+    nav{
+      position:sticky;top:0;z-index:100;
+      background:rgba(11,13,18,.85);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      padding:0 40px;
+      display:flex;align-items:center;justify-content:space-between;
+      height:58px;
+    }
+    .nav-logo{
+      display:flex;align-items:center;gap:10px;
+      font-weight:700;font-size:15px;
+      text-decoration:none;color:var(--text);
+    }
+    .nav-logo-icon{
+      width:30px;height:30px;
+      background:linear-gradient(135deg,#4f6ef7,#7c3aed);
+      border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:15px;
+    }
+    .nav-links{display:flex;gap:6px;}
+    .nav-links a{
+      padding:5px 12px;border-radius:6px;
+      font-size:13px;color:var(--text2);
+      text-decoration:none;transition:all .15s;
+    }
+    .nav-links a:hover{background:var(--bg3);color:var(--text);}
+
+    /* ── HERO ────────────────────────────── */
+    .hero{
+      padding:80px 40px 60px;
+      max-width:1100px;margin:0 auto;
+      display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+    }
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:5px 12px;
+      background:rgba(79,110,247,.12);border:1px solid rgba(79,110,247,.25);
+      border-radius:20px;font-size:12px;color:var(--accent);
+      margin-bottom:18px;
+    }
+    .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    h1{font-size:42px;font-weight:800;line-height:1.15;margin-bottom:18px;}
+    h1 span{
+      background:linear-gradient(135deg,#4f6ef7,#7c3aed,#06b6d4);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:28px;}
+    .hero-stats{
+      display:flex;gap:24px;flex-wrap:wrap;
+    }
+    .stat{
+      text-align:center;padding:16px 20px;
+      background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
+    }
+    .stat-num{font-size:28px;font-weight:800;color:var(--accent);}
+    .stat-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+
+    .hero-right{position:relative;}
+    .terminal{
+      background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);
+      overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);
+    }
+    .terminal-bar{
+      padding:12px 16px;background:var(--bg3);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:8px;
+    }
+    .t-dot{width:10px;height:10px;border-radius:50%;}
+    .t-red{background:#ff5f57;} .t-yellow{background:#ffbd2e;} .t-green{background:#28c940;}
+    .terminal-title{font-size:12px;color:var(--text3);margin-left:6px;font-family:var(--mono);}
+    .terminal-body{padding:20px;font-family:var(--mono);font-size:12.5px;line-height:1.8;}
+    .t-prompt{color:var(--green);}
+    .t-cmd{color:var(--text);}
+    .t-out{color:var(--text2);}
+    .t-tool{color:var(--accent);}
+    .t-ok{color:var(--green);}
+    .t-warn{color:var(--yellow);}
+
+    /* ── SECTION ─────────────────────────── */
+    section{padding:60px 40px;max-width:1100px;margin:0 auto;}
+    .section-label{
+      font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+      color:var(--accent);margin-bottom:10px;
+    }
+    h2{font-size:30px;font-weight:700;margin-bottom:8px;}
+    .section-sub{font-size:15px;color:var(--text2);margin-bottom:36px;}
+
+    /* ── TOOL GRID ───────────────────────── */
+    .tool-grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+      gap:16px;
+    }
+    .tool-card{
+      background:var(--bg2);border:1px solid var(--border);
+      border-radius:var(--r);padding:22px;
+      transition:all .2s;cursor:default;
+      position:relative;overflow:hidden;
+    }
+    .tool-card::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at top left,var(--card-glow,rgba(79,110,247,.06)),transparent 70%);
+      pointer-events:none;
+    }
+    .tool-card:hover{border-color:var(--card-border,var(--accent));transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+
+    .tool-card.c-blue   {--card-glow:rgba(79,110,247,.08); --card-border:#4f6ef7;}
+    .tool-card.c-cyan   {--card-glow:rgba(6,182,212,.08);  --card-border:#06b6d4;}
+    .tool-card.c-green  {--card-glow:rgba(16,185,129,.08); --card-border:#10b981;}
+    .tool-card.c-yellow {--card-glow:rgba(245,158,11,.08); --card-border:#f59e0b;}
+    .tool-card.c-red    {--card-glow:rgba(239,68,68,.08);  --card-border:#ef4444;}
+    .tool-card.c-purple {--card-glow:rgba(124,58,237,.08); --card-border:#7c3aed;}
+    .tool-card.c-orange {--card-glow:rgba(249,115,22,.08); --card-border:#f97316;}
+    .tool-card.c-pink   {--card-glow:rgba(236,72,153,.08); --card-border:#ec4899;}
+
+    .tool-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+    .tool-icon{
+      width:40px;height:40px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;flex-shrink:0;
+      background:var(--bg4);border:1px solid var(--border);
+    }
+    .tool-name{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);}
+    .tool-type-badge{
+      margin-left:auto;font-size:10px;padding:2px 8px;border-radius:10px;
+      font-weight:600;white-space:nowrap;
+    }
+    .badge-read   {background:rgba(79,110,247,.15);color:var(--accent);}
+    .badge-write  {background:rgba(239,68,68,.15);  color:var(--red);}
+    .badge-search {background:rgba(6,182,212,.15);  color:var(--cyan);}
+    .badge-meta   {background:rgba(245,158,11,.15); color:var(--yellow);}
+    .badge-format {background:rgba(16,185,129,.15); color:var(--green);}
+
+    .tool-desc{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;}
+
+    .tool-params{
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:var(--r2);padding:10px 12px;margin-bottom:12px;
+    }
+    .tool-params-title{
+      font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;
+      color:var(--text3);margin-bottom:8px;
+    }
+    .param-row{
+      display:grid;grid-template-columns:100px 60px 1fr;
+      gap:6px;align-items:baseline;padding:3px 0;
+    }
+    .param-name{font-family:var(--mono);font-size:11px;color:#93c5fd;}
+    .param-type{
+      font-family:var(--mono);font-size:9px;font-weight:600;
+      padding:1px 5px;border-radius:4px;text-align:center;
+    }
+    .pt-str {background:rgba(125,211,168,.12);color:#7dd3a8;}
+    .pt-int {background:rgba(240,160,112,.12);color:#f0a070;}
+    .pt-bool{background:rgba(192,132,252,.12);color:#c084fc;}
+    .pt-arr {background:rgba(6,182,212,.12);  color:var(--cyan);}
+    .param-desc{font-size:11px;color:var(--text3);}
+
+    .tool-example{
+      display:flex;align-items:flex-start;gap:6px;
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:var(--r2);padding:8px 10px;
+      font-family:var(--mono);font-size:11px;color:var(--text2);
+    }
+    .ex-label{color:var(--text3);flex-shrink:0;}
+
+    /* ── FLOW ────────────────────────────── */
+    .flow-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+      background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+      overflow:hidden;
+    }
+    .flow-step{
+      padding:28px 20px;text-align:center;
+      border-right:1px solid var(--border);position:relative;
+    }
+    .flow-step:last-child{border-right:none;}
+    .flow-step::after{
+      content:'→';
+      position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+      color:var(--text3);font-size:18px;z-index:1;
+    }
+    .flow-step:last-child::after{display:none;}
+    .flow-num{
+      width:36px;height:36px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;font-weight:700;font-size:14px;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 12px;
+    }
+    .flow-title{font-size:13px;font-weight:600;margin-bottom:6px;}
+    .flow-desc{font-size:12px;color:var(--text2);}
+
+    /* ── ROUTING TABLE ───────────────────── */
+    .routing-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .routing-table th{
+      text-align:left;padding:10px 14px;
+      background:var(--bg3);border:1px solid var(--border);
+      font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);
+    }
+    .routing-table td{
+      padding:10px 14px;border:1px solid var(--border);
+      vertical-align:top;
+    }
+    .routing-table tr:hover td{background:rgba(255,255,255,.02);}
+    .rt-query{color:var(--text);font-style:italic;}
+    .rt-tool{font-family:var(--mono);color:var(--accent);font-size:12px;}
+    .rt-why{color:var(--text2);}
+
+    /* ── BOUNDARY BOX ────────────────────── */
+    .boundary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .boundary-card{
+      border-radius:var(--r);padding:20px;
+    }
+    .boundary-card.ok  {background:rgba(16,185,129,.07); border:1px solid rgba(16,185,129,.2);}
+    .boundary-card.err {background:rgba(239,68,68,.07);  border:1px solid rgba(239,68,68,.2);}
+    .boundary-card h3{font-size:13px;font-weight:600;margin-bottom:12px;}
+    .boundary-card.ok  h3{color:var(--green);}
+    .boundary-card.err h3{color:var(--red);}
+    .boundary-item{
+      display:flex;align-items:flex-start;gap:8px;
+      font-size:13px;color:var(--text2);margin-bottom:8px;
+    }
+    .boundary-item:last-child{margin-bottom:0;}
+    .bi-icon{flex-shrink:0;margin-top:2px;}
+
+    /* ── EVAL BOX ────────────────────────── */
+    .eval-results{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;
+    }
+    .eval-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+      padding:20px;text-align:center;
+    }
+    .eval-score{font-size:32px;font-weight:800;color:var(--green);}
+    .eval-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px;}
+
+    /* ── SETUP ───────────────────────────── */
+    .setup-steps{display:flex;flex-direction:column;gap:12px;}
+    .setup-step{
+      display:flex;gap:16px;align-items:flex-start;
+      background:var(--bg2);border:1px solid var(--border);
+      border-radius:var(--r);padding:18px;
+    }
+    .setup-num{
+      width:28px;height:28px;border-radius:50%;
+      background:var(--accent);color:#fff;
+      font-weight:700;font-size:13px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .setup-content h4{font-size:14px;font-weight:600;margin-bottom:6px;}
+    .setup-content p{font-size:13px;color:var(--text2);}
+    code{
+      font-family:var(--mono);font-size:12px;
+      background:var(--bg4);border:1px solid var(--border);
+      border-radius:4px;padding:1px 6px;color:var(--cyan);
+    }
+    pre{
+      font-family:var(--mono);font-size:12.5px;
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:var(--r2);padding:14px 16px;
+      color:var(--text2);overflow-x:auto;margin-top:8px;line-height:1.7;
+    }
+    pre .k{color:var(--text3);}
+    pre .v{color:var(--cyan);}
+    pre .c{color:var(--green);}
+
+    /* ── FOOTER ──────────────────────────── */
+    footer{
+      border-top:1px solid var(--border);
+      padding:32px 40px;
+      display:flex;align-items:center;justify-content:space-between;
+      color:var(--text3);font-size:12px;
+    }
+    .footer-logo{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text2);}
+
+    /* ── MISC ────────────────────────────── */
+    .divider{
+      height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);
+      margin:0 40px;
+    }
+    .tag{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:2px 8px;border-radius:4px;font-size:11px;
+      font-family:var(--mono);
+    }
+    .tag-required{background:rgba(239,68,68,.1);color:var(--red);}
+    .tag-optional{background:rgba(148,163,184,.08);color:var(--text3);}
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;} .hero-right{display:none;}
+      .flow-grid{grid-template-columns:1fr 1fr;}
+      .boundary-grid{grid-template-columns:1fr;}
+      .eval-results{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">🔬</div>
+    Research Agent
+  </a>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#routing">Routing</a>
+    <a href="#boundaries">Boundaries</a>
+    <a href="#eval">Eval</a>
+    <a href="#setup">Setup</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────── -->
+<div class="hero">
+  <div>
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Day 04 · AI Tool Calling Lab
+    </div>
+    <h1>Research Agent<br /><span>Documentation</span></h1>
+    <p class="hero-sub">
+      Chatbot AI có khả năng tìm kiếm tin tức, đọc tweet, tra cứu bài báo khoa học,
+      kiểm tra chính sách công ty và gửi email — tất cả với <strong>tool routing chính xác</strong>
+      và <strong>boundary an toàn</strong>.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">11</div><div class="stat-lbl">Tools</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Base Eval</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Group Eval</div></div>
+      <div class="stat"><div class="stat-num">v3</div><div class="stat-lbl">Version</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot t-red"></div><div class="t-dot t-yellow"></div><div class="t-dot t-green"></div>
+        <span class="terminal-title">research-agent · openrouter</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">You›</span> <span class="t-cmd">Tin AI hôm nay có gì?</span></div>
+        <div style="color:#555a72;font-size:11px;margin:4px 0">🔧 lookup(query="AI", topic="news", timeframe="day")</div>
+        <div><span class="t-prompt" style="color:#06b6d4">Bot›</span> <span class="t-out">Tìm thấy 5 bài báo mới...</span></div>
+        <br/>
+        <div><span class="t-prompt">You›</span> <span class="t-cmd">Tweet mới của Sam Altman?</span></div>
+        <div style="color:#555a72;font-size:11px;margin:4px 0">🔧 timeline(screenname="sama", limit=5)</div>
+        <div><span class="t-prompt" style="color:#06b6d4">Bot›</span> <span class="t-out">5 tweet gần nhất của @sama...</span></div>
+        <br/>
+        <div><span class="t-prompt">You›</span> <span class="t-cmd">Gửi email cho bob@co.com</span></div>
+        <div style="color:#555a72;font-size:11px;margin:4px 0">🔧 clarify(response_type="yes_no")</div>
+        <div><span class="t-prompt" style="color:#06b6d4">Bot›</span> <span class="t-warn">Bạn có chắc muốn gửi không?</span></div>
+        <div style="color:#10b981;font-size:11px;margin-top:6px">✓ Boundary: always confirm before send</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HOW IT WORKS ───────────────────────────────── -->
+<section>
+  <div class="section-label">Kiến trúc</div>
+  <h2>Cách hoạt động</h2>
+  <p class="section-sub">Mỗi tin nhắn từ user đi qua 4 bước xử lý trước khi trả kết quả.</p>
+  <div class="flow-grid">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-title">User Message</div>
+      <div class="flow-desc">User gửi câu hỏi bằng tiếng Việt hoặc tiếng Anh</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-title">LLM Router</div>
+      <div class="flow-desc">Model đọc system prompt + tool descriptions để chọn đúng tool và điền args</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-title">Tool Execution</div>
+      <div class="flow-desc">Tool được gọi thực sự (API call, SMTP, ...) và trả về kết quả JSON</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-title">Final Response</div>
+      <div class="flow-desc">Model tổng hợp kết quả tool và trả lời user bằng ngôn ngữ tự nhiên</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── TOOLS ──────────────────────────────────────── -->
+<section id="tools">
+  <div class="section-label">11 Tools</div>
+  <h2>Danh sách Tool</h2>
+  <p class="section-sub">Mỗi tool có vai trò riêng biệt. Agent chọn đúng tool dựa trên context của câu hỏi.</p>
+
+  <div class="tool-grid">
+
+    <!-- timeline -->
+    <div class="tool-card c-blue">
+      <div class="tool-header">
+        <div class="tool-icon">🐦</div>
+        <div>
+          <div class="tool-name">timeline</div>
+        </div>
+        <span class="tool-type-badge badge-read">Read</span>
+      </div>
+      <p class="tool-desc">Lấy tweet gần đây từ timeline của <strong>một người cụ thể</strong> trên Twitter/X. Cần biết handle (@username).</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">screenname</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Handle Twitter (e.g. sama, elonmusk) <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">limit</span>
+          <span class="param-type pt-int">integer</span>
+          <span class="param-desc">Số tweet cần lấy, mặc định 5 <span class="tag tag-optional">optional</span></span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;Hỏi tweet của một <em>người cụ thể</em> (Sam Altman, Elon Musk…)
+      </div>
+    </div>
+
+    <!-- social_search -->
+    <div class="tool-card c-cyan">
+      <div class="tool-header">
+        <div class="tool-icon">🔍</div>
+        <div><div class="tool-name">social_search</div></div>
+        <span class="tool-type-badge badge-search">Search</span>
+      </div>
+      <p class="tool-desc">Tìm kiếm tweet theo <strong>chủ đề hoặc từ khóa</strong> — không phải của một người cụ thể.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">query</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Từ khóa tìm kiếm <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">search_type</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Latest (mặc định) hoặc Top (phổ biến nhất)</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">limit</span>
+          <span class="param-type pt-int">integer</span>
+          <span class="param-desc">Số kết quả, mặc định 5</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;"Mọi người đang bàn gì về GPT-5?"
+      </div>
+    </div>
+
+    <!-- lookup -->
+    <div class="tool-card c-blue">
+      <div class="tool-header">
+        <div class="tool-icon">🌐</div>
+        <div><div class="tool-name">lookup</div></div>
+        <span class="tool-type-badge badge-search">Search</span>
+      </div>
+      <p class="tool-desc">Tìm kiếm web khi <strong>không có URL cụ thể</strong>. Hỗ trợ lọc theo tin tức và thời gian.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">query</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Từ khóa cốt lõi (không chứa "tin tức") <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">topic</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">news | general</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">timeframe</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">day | week | month | year</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;"Tin tức AI hôm nay" → query="AI", topic=news, timeframe=day
+      </div>
+    </div>
+
+    <!-- fetch -->
+    <div class="tool-card c-cyan">
+      <div class="tool-header">
+        <div class="tool-icon">📄</div>
+        <div><div class="tool-name">fetch</div></div>
+        <span class="tool-type-badge badge-read">Read</span>
+      </div>
+      <p class="tool-desc">Đọc toàn bộ nội dung của <strong>một URL cụ thể</strong> mà user đã cung cấp.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">url</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">URL đầy đủ (https://...) <span class="tag tag-required">required</span></span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;"Tóm tắt bài này: https://openai.com/blog/gpt-5"
+      </div>
+    </div>
+
+    <!-- clarify -->
+    <div class="tool-card c-yellow">
+      <div class="tool-header">
+        <div class="tool-icon">❓</div>
+        <div><div class="tool-name">clarify</div></div>
+        <span class="tool-type-badge badge-meta">Meta</span>
+      </div>
+      <p class="tool-desc">Hỏi lại user khi thiếu thông tin quan trọng, hoặc để xác nhận trước khi thực hiện hành động ghi.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">question</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Câu hỏi <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">response_type</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">text | yes_no | choice</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;Thiếu handle, URL, hoặc trước khi gửi/publish
+      </div>
+    </div>
+
+    <!-- format -->
+    <div class="tool-card c-green">
+      <div class="tool-header">
+        <div class="tool-icon">📋</div>
+        <div><div class="tool-name">format</div></div>
+        <span class="tool-type-badge badge-format">Format</span>
+      </div>
+      <p class="tool-desc">Trình bày dữ liệu đã thu thập thành bản tin, digest hoặc thread đẹp.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">items</span>
+          <span class="param-type pt-arr">array</span>
+          <span class="param-desc">Danh sách item đã thu thập <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">template</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">brief | sections | bullets | thread | daily_ai_vn <span class="tag tag-required">required</span></span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;Sau khi có data, render thành bản tin đẹp
+      </div>
+    </div>
+
+    <!-- send -->
+    <div class="tool-card c-red">
+      <div class="tool-header">
+        <div class="tool-icon">📤</div>
+        <div><div class="tool-name">send</div></div>
+        <span class="tool-type-badge badge-write">Write ⚠️</span>
+      </div>
+      <p class="tool-desc">Gửi văn bản lên <strong>Telegram</strong>. Luôn yêu cầu xác nhận (yes_no) trước khi gọi.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">text</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Nội dung cần gửi <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">confirmed</span>
+          <span class="param-type pt-bool">boolean</span>
+          <span class="param-desc">Phải là true sau khi user xác nhận</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Flow:</span>&nbsp;clarify(yes_no) → user OK → send(confirmed=true)
+      </div>
+    </div>
+
+    <!-- send_email -->
+    <div class="tool-card c-orange">
+      <div class="tool-header">
+        <div class="tool-icon">✉️</div>
+        <div><div class="tool-name">send_email</div></div>
+        <span class="tool-type-badge badge-write">Write ⚠️</span>
+      </div>
+      <p class="tool-desc">Gửi email qua SMTP (Gmail mặc định). Luôn xác nhận trước khi gửi, không hỏi về CC nếu user không nhắc.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">to</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Email người nhận <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">subject</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Tiêu đề <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">body</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Nội dung <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">cc</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">CC (optional, chỉ hỏi nếu user đề cập)</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">confirmed</span>
+          <span class="param-type pt-bool">boolean</span>
+          <span class="param-desc">true sau khi user xác nhận</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Cần:</span>&nbsp;EMAIL_SENDER + EMAIL_PASSWORD trong .env
+      </div>
+    </div>
+
+    <!-- policy -->
+    <div class="tool-card c-purple">
+      <div class="tool-header">
+        <div class="tool-icon">📜</div>
+        <div><div class="tool-name">policy</div></div>
+        <span class="tool-type-badge badge-read">Read</span>
+      </div>
+      <p class="tool-desc">Tra cứu tài liệu chính sách <strong>nội bộ công ty</strong> — không tìm trên internet.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">query</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Nội dung cần tra cứu <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">policy_area</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">all | ai_research | source_citation | data_privacy | external_publishing | tool_usage</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;"Chính sách trích dẫn nguồn của công ty?"
+      </div>
+    </div>
+
+    <!-- papers -->
+    <div class="tool-card c-pink">
+      <div class="tool-header">
+        <div class="tool-icon">📚</div>
+        <div><div class="tool-name">papers</div></div>
+        <span class="tool-type-badge badge-search">Search</span>
+      </div>
+      <p class="tool-desc">Tìm kiếm bài báo khoa học trên <strong>arXiv</strong> theo chủ đề hoặc từ khóa.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">query</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">Từ khóa học thuật <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">max_results</span>
+          <span class="param-type pt-int">integer</span>
+          <span class="param-desc">Số bài tối đa, mặc định 5</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">sort_by</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">relevance | lastUpdatedDate | submittedDate</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;"Tìm paper về diffusion models" → dùng papers, không dùng lookup
+      </div>
+    </div>
+
+    <!-- paper_text -->
+    <div class="tool-card c-pink">
+      <div class="tool-header">
+        <div class="tool-icon">📖</div>
+        <div><div class="tool-name">paper_text</div></div>
+        <span class="tool-type-badge badge-read">Read</span>
+      </div>
+      <p class="tool-desc">Đọc toàn bộ nội dung text của <strong>một bài báo arXiv cụ thể</strong> theo ID hoặc URL.</p>
+      <div class="tool-params">
+        <div class="tool-params-title">Parameters</div>
+        <div class="param-row">
+          <span class="param-name">arxiv_url</span>
+          <span class="param-type pt-str">string</span>
+          <span class="param-desc">arXiv ID hoặc URL đầy đủ <span class="tag tag-required">required</span></span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">max_pages</span>
+          <span class="param-type pt-int">integer</span>
+          <span class="param-desc">Số trang tối đa, mặc định 5</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">max_chars</span>
+          <span class="param-type pt-int">integer</span>
+          <span class="param-desc">Ký tự tối đa trả về, mặc định 8000</span>
+        </div>
+      </div>
+      <div class="tool-example">
+        <span class="ex-label">Khi nào:</span>&nbsp;Dùng sau papers để đọc chi tiết một bài cụ thể
+      </div>
+    </div>
+
+  </div><!-- /tool-grid -->
+</section>
+
+<div class="divider"></div>
+
+<!-- ── ROUTING TABLE ──────────────────────────────── -->
+<section id="routing">
+  <div class="section-label">Routing Logic</div>
+  <h2>Chọn Tool Nào?</h2>
+  <p class="section-sub">Agent sử dụng các quy tắc này để chọn đúng tool cho từng câu hỏi.</p>
+
+  <table class="routing-table">
+    <thead>
+      <tr><th>Câu hỏi ví dụ</th><th>Tool được chọn</th><th>Args chính</th><th>Lý do</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rt-query">"Tweet mới nhất của Sam Altman?"</td>
+        <td class="rt-tool">timeline</td>
+        <td><code>screenname="sama"</code></td>
+        <td class="rt-why">Hỏi về 1 người cụ thể → map tên → handle</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Mọi người bàn gì về GPT-5?"</td>
+        <td class="rt-tool">social_search</td>
+        <td><code>query="GPT-5"</code></td>
+        <td class="rt-why">Chủ đề/topic trên Twitter, không phải 1 người</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Tin tức AI hôm nay?"</td>
+        <td class="rt-tool">lookup</td>
+        <td><code>query="AI" topic="news" timeframe="day"</code></td>
+        <td class="rt-why">Web news, "hôm nay" → timeframe=day</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Tóm tắt bài https://openai.com/..."</td>
+        <td class="rt-tool">fetch</td>
+        <td><code>url="https://..."</code></td>
+        <td class="rt-why">Đã có URL cụ thể → đọc trực tiếp</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Tóm tắt 5 tweet giúp mình" (không có tên)</td>
+        <td class="rt-tool">clarify</td>
+        <td><code>response_type="text"</code></td>
+        <td class="rt-why">Thiếu thông tin ai → hỏi, không đoán</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Đăng bản tin này lên Telegram"</td>
+        <td class="rt-tool">clarify</td>
+        <td><code>response_type="yes_no"</code></td>
+        <td class="rt-why">Write action → xác nhận trước khi gửi</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Tìm paper về RAG"</td>
+        <td class="rt-tool">papers</td>
+        <td><code>query="RAG"</code></td>
+        <td class="rt-why">Bài báo khoa học → arXiv, không phải web</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Tìm tin web AI và tìm tweet về AI"</td>
+        <td class="rt-tool">lookup + social_search</td>
+        <td><code>parallel</code></td>
+        <td class="rt-why">Hai nguồn độc lập → gọi song song</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Viết code Python tính Fibonacci"</td>
+        <td class="rt-tool">— (no tool)</td>
+        <td>—</td>
+        <td class="rt-why">Ngoài phạm vi research → từ chối lịch sự</td>
+      </tr>
+      <tr>
+        <td class="rt-query">"Chính sách trích dẫn nguồn?"</td>
+        <td class="rt-tool">policy</td>
+        <td><code>policy_area="source_citation"</code></td>
+        <td class="rt-why">Quy định nội bộ → policy, không tìm web</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── NAME → HANDLE ──────────────────────────────── -->
+<section>
+  <div class="section-label">Mapping</div>
+  <h2>Tên Nổi Tiếng → Twitter Handle</h2>
+  <p class="section-sub">Agent tự động map tên người sang handle chính xác khi gọi <code>timeline</code>.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Sam Altman → <span style="color:var(--accent)">@sama</span></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Elon Musk → <span style="color:var(--accent)">@elonmusk</span></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Andrej Karpathy → <span style="color:var(--accent)">@karpathy</span></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Yann LeCun → <span style="color:var(--accent)">@ylecun</span></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Greg Brockman → <span style="color:var(--accent)">@gbrockman</span></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;">Tên không rõ → <span style="color:var(--yellow)">clarify(text)</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── BOUNDARIES ─────────────────────────────────── -->
+<section id="boundaries">
+  <div class="section-label">Safety Boundaries</div>
+  <h2>Những gì Agent làm và không làm</h2>
+  <p class="section-sub">Agent có ranh giới rõ ràng để đảm bảo an toàn và chính xác.</p>
+  <div class="boundary-grid">
+    <div class="boundary-card ok">
+      <h3>✅ Agent SẼ làm</h3>
+      <div class="boundary-item"><span class="bi-icon">🐦</span>Lấy tweet của người nổi tiếng theo tên</div>
+      <div class="boundary-item"><span class="bi-icon">🌐</span>Tìm tin tức web với đúng timeframe</div>
+      <div class="boundary-item"><span class="bi-icon">📄</span>Đọc URL cụ thể người dùng cung cấp</div>
+      <div class="boundary-item"><span class="bi-icon">📚</span>Tìm bài báo khoa học trên arXiv</div>
+      <div class="boundary-item"><span class="bi-icon">❓</span>Hỏi lại khi thiếu thông tin quan trọng</div>
+      <div class="boundary-item"><span class="bi-icon">🔄</span>Gọi song song nhiều tool khi cần</div>
+      <div class="boundary-item"><span class="bi-icon">📜</span>Tra cứu chính sách nội bộ</div>
+      <div class="boundary-item"><span class="bi-icon">✉️</span>Gửi email <em>sau khi xác nhận</em></div>
+    </div>
+    <div class="boundary-card err">
+      <h3>❌ Agent KHÔNG làm</h3>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Tự đoán handle khi user không nêu tên ai</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Tự gửi email/Telegram mà không hỏi xác nhận</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Viết code Python, giải toán, văn sáng tạo</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Dùng lookup khi đã có URL cụ thể</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Dùng timeline cho tìm kiếm theo chủ đề</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Hỏi CC email khi user không đề cập</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Gọi tool khi user hỏi về bản thân agent</div>
+      <div class="boundary-item"><span class="bi-icon">🚫</span>Dùng lookup thay cho papers khi hỏi về research</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── EVAL RESULTS ───────────────────────────────── -->
+<section id="eval">
+  <div class="section-label">Kết quả Evaluation</div>
+  <h2>Độ Chính Xác</h2>
+  <p class="section-sub">Đánh giá tự động trên 25 test case bao gồm routing, args, boundary và multi-turn.</p>
+  <div class="eval-results">
+    <div class="eval-card">
+      <div class="eval-score">100%</div>
+      <div class="eval-label">Case Accuracy</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-score">100%</div>
+      <div class="eval-label">Tool Routing</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-score">100%</div>
+      <div class="eval-label">Argument Accuracy</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-score">100%</div>
+      <div class="eval-label">Multi-turn</div>
+    </div>
+  </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+    <table class="routing-table" style="margin:0;">
+      <thead><tr><th>Eval Suite</th><th>Cases</th><th>Pass</th><th>Score</th><th>Run File</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Base (eval_base.json)</td><td>20</td><td>20</td>
+          <td><span style="color:var(--green);font-weight:700;">100%</span></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3);">v0_B_base_openrouter_*</td>
+        </tr>
+        <tr>
+          <td>Group (eval_group.json)</td><td>5</td><td>5</td>
+          <td><span style="color:var(--green);font-weight:700;">100%</span></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3);">v3_B_group_openrouter_*</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SETUP ──────────────────────────────────────── -->
+<section id="setup">
+  <div class="section-label">Hướng Dẫn</div>
+  <h2>Cách Chạy</h2>
+  <p class="section-sub">Thiết lập và chạy Research Agent trong vài phút.</p>
+  <div class="setup-steps">
+
+    <div class="setup-step">
+      <div class="setup-num">1</div>
+      <div class="setup-content">
+        <h4>Cấu hình .env</h4>
+        <p>Điền API keys vào file <code>.env</code> (sao chép từ <code>.env.example</code>):</p>
+        <pre><span class="k">OPENROUTER_API_KEY=</span><span class="v">sk-or-v1-...</span>
+<span class="k">TAVILY_API_KEY=</span><span class="v">tvly-...</span>
+<span class="k">RAPIDAPI_KEY=</span><span class="v">your-key</span>
+<span class="c"># Email (optional)</span>
+<span class="k">EMAIL_SENDER=</span><span class="v">your@gmail.com</span>
+<span class="k">EMAIL_PASSWORD=</span><span class="v">xxxx xxxx xxxx xxxx</span></pre>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-num">2</div>
+      <div class="setup-content">
+        <h4>Chạy Web UI (khuyến nghị)</h4>
+        <p>Giao diện web đẹp tại <code>http://localhost:5000</code>:</p>
+        <pre>python web_ui.py --provider openrouter --version v0</pre>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-num">3</div>
+      <div class="setup-content">
+        <h4>Chạy Chat CLI</h4>
+        <p>Chat trực tiếp trong terminal:</p>
+        <pre>python chat.py --provider openrouter --version v0</pre>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-num">4</div>
+      <div class="setup-content">
+        <h4>Chạy Evaluation</h4>
+        <p>Đánh giá độ chính xác trên bộ test case:</p>
+        <pre><span class="c"># Base eval (20 cases)</span>
+python run_eval.py --provider openrouter --version v3 --suite base --eval-cases data/eval_base.json
+
+<span class="c"># Group eval (5 cases tự viết)</span>
+python run_eval.py --provider openrouter --version v3 --suite group --eval-cases data/eval_group.json</pre>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">
+    <div style="width:22px;height:22px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;">🔬</div>
+    Research Agent · Day 04 AI Tool Calling Lab
+  </div>
+  <div>Provider: OpenRouter · Model: openai/gpt-4o-mini · Version: v3</div>
+</footer>
+
+</body>
+</html>

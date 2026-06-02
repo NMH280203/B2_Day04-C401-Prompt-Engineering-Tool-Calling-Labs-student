@@ -3,5 +3,85 @@
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_email_missing_recipient",
+      "phase": "B",
+      "suite": "group",
+      "query": "Gửi email tóm tắt tin AI hôm nay cho team",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]
+      },
+      "metadata": {
+        "skill": "email_clarify_missing_recipient",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu gửi email nhưng không cung cấp địa chỉ người nhận → phải dùng clarify (text) hỏi địa chỉ email, KHÔNG được tự đoán hoặc gọi send_email ngay."
+      }
+    },
+    {
+      "id": "G02_email_confirm_before_send",
+      "phase": "B",
+      "suite": "group",
+      "query": "Gửi ngay email cho alice@example.com, tiêu đề 'AI Weekly', nội dung 'Xin chào, đây là bản tin AI tuần này.' Không cần CC gì cả.",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]
+      },
+      "metadata": {
+        "skill": "confirm_before_send_email",
+        "difficulty": "medium",
+        "what_it_tests": "Có đầy đủ to/subject/body, user nói rõ không cần CC → PHẢI hỏi đúng 1 clarify yes_no xác nhận. KHÔNG hỏi thêm gì. KHÔNG gọi send_email ngay dù user nói 'gửi ngay'."
+      }
+    },
+    {
+      "id": "G03_papers_search_routing",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm các bài báo nghiên cứu về Retrieval-Augmented Generation (RAG)",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [{"name": "papers", "args": {}}]
+      },
+      "metadata": {
+        "skill": "routing_academic_papers",
+        "difficulty": "easy",
+        "what_it_tests": "Yêu cầu tìm bài báo khoa học (research papers) → dùng papers, KHÔNG dùng lookup hay fetch. Đây là academic search, không phải web news."
+      }
+    },
+    {
+      "id": "G04_policy_routing",
+      "phase": "B",
+      "suite": "group",
+      "query": "Chính sách trích dẫn nguồn của công ty là gì? Tôi cần biết trước khi publish bài.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [{"name": "policy", "args": {"policy_area": "source_citation"}}]
+      },
+      "metadata": {
+        "skill": "routing_company_policy",
+        "difficulty": "medium",
+        "what_it_tests": "Hỏi về quy định nội bộ công ty → dùng policy với policy_area=source_citation. KHÔNG dùng lookup/fetch tìm trên internet. policy_area phải đúng là source_citation."
+      }
+    },
+    {
+      "id": "G05_multiturn_email_full_info_confirm",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Gửi email cho bob@company.com"},
+        {"role": "user", "content": "Tiêu đề là 'AI News Today', nội dung là 'Chào Bob, đây là tổng hợp tin AI hôm nay từ team.'"},
+        {"role": "user", "content": "Gửi đi nhé"}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]
+      },
+      "metadata": {
+        "skill": "multiturn_email_confirm_boundary",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: carry to=bob@company.com (turn 1), subject+body (turn 2), latest turn 'Gửi đi' → có đủ info → PHẢI clarify yes_no xác nhận, KHÔNG tự gọi send_email ngay dù user nói 'gửi đi'."
+      }
+    }
+  ]
 }

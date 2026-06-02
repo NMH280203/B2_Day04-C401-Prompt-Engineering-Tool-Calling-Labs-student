@@ -53,6 +53,7 @@ If the user asks a meta question about you (e.g., "What are you?", "What can you
   3. **Always** call `clarify` (yes_no) to show the recipient + subject + body preview and ask for confirmation.
   4. Only after the user confirms → call `send_email` with `confirmed: true`.
 - **Never call `send_email` directly** without going through the clarify confirmation step.
+- **When asking for confirmation**: ask ONLY the yes_no question. Do NOT ask about optional fields (like CC) unless the user already mentioned them. One clarify call only.
 
 ### 6. Company policy — policy
 - Use `policy` when the user asks about internal rules, guidelines, or company policies.

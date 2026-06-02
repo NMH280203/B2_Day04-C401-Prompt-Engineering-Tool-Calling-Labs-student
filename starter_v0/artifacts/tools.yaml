@@ -323,9 +323,9 @@ tools:
       3. ALWAYS call clarify (response_type=yes_no) to confirm before sending, even if you have all info.
          Show the recipient, subject, and body preview in the confirmation question.
       4. Only call send_email with confirmed=true AFTER the user says yes.
-
-      This tool requires EMAIL_SENDER and EMAIL_PASSWORD in the .env file.
-      If those are missing, it will return an error with setup instructions.
+      5. IMPORTANT: Only ask for ONE clarify at a time. When you have to/subject/body,
+         ask ONLY the yes_no confirmation — do NOT ask about CC or any other optional
+         field unless the user explicitly mentioned it. CC is optional and defaults to empty.
     parameters:
       type: object
       properties:
