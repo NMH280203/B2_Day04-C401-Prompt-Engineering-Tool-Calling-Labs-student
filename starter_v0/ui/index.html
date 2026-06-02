@@ -374,6 +374,69 @@
 
     @keyframes slideIn { from{opacity:0;transform:translateX(-7px)} to{opacity:1;transform:translateX(0)} }
     @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+
+    /* ── Mobile ──────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 40;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(2px);
+      animation: fadeIn .2s ease;
+    }
+    .btn-menu {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text-secondary); cursor: pointer;
+      padding: 6px; border-radius: 8px;
+      transition: background .15s;
+    }
+    .btn-menu:hover { background: var(--bg-card); }
+    .btn-menu svg { display: block; }
+
+    @media (max-width: 700px) {
+      .app { grid-template-columns: 1fr; }
+
+      .sidebar {
+        position: fixed; left: 0; top: 0; bottom: 0;
+        width: min(300px, 85vw);
+        z-index: 50;
+        transform: translateX(-110%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        box-shadow: 4px 0 32px rgba(0,0,0,.5);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .btn-menu { display: flex; align-items: center; justify-content: center; }
+
+      .chat-header {
+        padding: 12px 16px;
+        gap: 10px;
+      }
+      .chat-title  { font-size: 14px; }
+      .chat-subtitle { display: none; }
+
+      .messages { padding: 14px 14px; }
+      .msg { max-width: 100%; }
+      .msg-col { max-width: calc(100vw - 80px); }
+      .bubble { font-size: 13.5px; padding: 10px 13px; }
+
+      .welcome { padding: 24px 16px; }
+      .welcome h2 { font-size: 18px; }
+      .welcome-chips { gap: 6px; }
+      .chip { font-size: 12px; padding: 5px 11px; }
+
+      .input-area { padding: 12px 14px 16px; }
+      .input-hint { display: none; }
+      #user-input { font-size: 16px; } /* prevent zoom on iOS */
+      .btn-send { width: 38px; height: 38px; }
+
+      .ti-call-name { font-size: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -430,9 +493,17 @@
     </div>
   </aside>
 
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
   <!-- ── Main ─────────────────────────────────── -->
   <main class="main">
     <header class="chat-header">
+      <button class="btn-menu" id="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
       <div>
         <div class="chat-title">Chat với Research Agent</div>
         <div class="chat-subtitle">Hỏi về tin tức, tweet, bài báo khoa học...</div>
@@ -816,6 +887,26 @@ async function resetChat() {
     '<div style="font-size:11px;color:var(--text-muted);text-align:center;padding-top:8px;">Chưa có tool nào được gọi</div>';
   toolLogEmpty = true;
 }
+
+// ── Mobile sidebar toggle ─────────────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const isOpen   = sidebar.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 700) {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+// Close sidebar when user taps a chip suggestion on mobile
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', closeSidebarOnMobile));
 </script>
 </body>
 </html>

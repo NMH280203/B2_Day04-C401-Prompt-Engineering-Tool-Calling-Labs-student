@@ -2,8 +2,8 @@
 
 ## Team
 
-- Team:
-- Members: 
+- Team:105
+- Members: Mai Đức Vinh 2A202600587
 - Provider/model: OpenRouter / openai/gpt-4o-mini
 
 ## Final Metrics

@@ -123,6 +123,9 @@ class GeminiProvider:
         for candidate in getattr(resp, "candidates", []) or []:
             content = getattr(candidate, "content", None)
             for part in getattr(content, "parts", []) or []:
+                # Skip internal reasoning/thinking parts (Gemma 4 / Gemini thinking models)
+                if getattr(part, "thought", False):
+                    continue
                 text = _part_text(part)
                 if text:
                     text_parts.append(text)
