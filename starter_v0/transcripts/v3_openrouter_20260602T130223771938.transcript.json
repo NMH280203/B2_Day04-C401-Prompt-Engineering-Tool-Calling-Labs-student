@@ -1,0 +1,577 @@
+{
+  "transcript_id": "v3_openrouter_20260602T130223771938",
+  "version": "v3",
+  "artifact_version": "v3+pa8ca0c40b759+t29bbb44587af",
+  "prompt_hash": "a8ca0c40b759730f935ed4470af3f7da0d01438791e78ba71eb3947fd0d86469",
+  "tools_hash": "29bbb44587af62b18c4da5da5cf6e466436b008be50f3ab5a9f481e9605a4cb7",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "/Users/mac/Documents/VinAI/B2_Day04-C401-Prompt-Engineering-Tool-Calling-Labs-student/starter_v0/artifacts/system_prompt.md",
+  "tools": "/Users/mac/Documents/VinAI/B2_Day04-C401-Prompt-Engineering-Tool-Calling-Labs-student/starter_v0/artifacts/tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-06-02T13:02:23",
+  "updated_at": "2026-06-02T13:59:11",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-06-02T13:03:29",
+      "user": "tóm tắt bài báo này https://thanhnien.vn/",
+      "status": "waiting_for_user",
+      "assistant_text": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "clarify",
+              "args": {
+                "question": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+                "response_type": "text"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "clarify",
+              "args": {
+                "question": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+                "response_type": "text"
+              },
+              "result": {
+                "tool": "ask_user",
+                "question": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+                "response_type": "text",
+                "options": [],
+                "awaiting_user": true
+              }
+            }
+          ]
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có thể cung cấp tiêu đề hoặc nội dung cụ thể của bài báo mà bạn muốn tóm tắt không?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:03:33"
+    },
+    {
+      "turn_index": 2,
+      "started_at": "2026-06-02T13:04:29",
+      "user": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm\nbài báo này",
+      "status": "answered",
+      "assistant_text": "Bài báo \"Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C\" trên Thanh Niên đưa tin về tình hình thời tiết nắng nóng tại miền Trung và miền Bắc Việt Nam. Dưới đây là tóm tắt nội dung chính:\n\n- **Thời tiết nắng nóng**: Dự báo thời tiết cho thấy nắng nóng ở miền Bắc và miền Trung sẽ gia tăng cường độ. Vào ngày 2 tháng 6, miền Trung có thể ghi nhận nhiệt độ lên tới trên 39 độ C.\n- **Nhiệt độ cụ thể**: Trong ngày 1 tháng 6, nhiều tỉnh miền Bắc và miền Trung đã trải qua nắng nóng, với nhiệt độ cao nhất phổ biến từ 35 - 37 độ C. Một số nơi như Yên Châu (Sơn La) ghi nhận nhiệt độ lên tới 39,7 độ C.\n\nBài báo nhấn mạnh sự gia tăng cường độ nắng nóng so với ngày trước đó và cảnh báo về tình hình thời tiết trong những ngày tới.\n\nBạn có thể đọc bài báo đầy đủ [tại đây](https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm).",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "fetch",
+              "args": {
+                "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "fetch",
+              "args": {
+                "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm"
+              },
+              "result": {
+                "tool": "read_url",
+                "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm",
+                "items": [
+                  {
+                    "title": "Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C",
+                    "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm",
+                    "source": "thanhnien.vn",
+                    "summary": "- [Trang chủ](https://thanhnien.vn/ \"Trang chủ\")\n- [Chính trị](https://thanhnien.vn/chinh-tri.htm \"Chính trị\")\n\n\n\n\nChính trị\n\n- [Thời sự](https://thanhnien.vn/thoi-su.htm \"Thời sự\")\n\n\n\n\nThời sự\n\n- [Thế giới](https://thanhnien.vn/the-gioi.htm \"Thế giới\")\n\n\n\n\nThế giới\n\n- [Kinh tế](https://thanhnien.vn/kinh-te.htm \"Kinh tế\")\n\n\n\n\nKinh tế\n\n- [Đời sống](https://thanhnien.vn/doi-song.htm \"Đời sống\")\n\n\n\n\nĐời sống\n\n- [Sức khỏe](https://thanhnien.vn/suc-khoe.htm \"Sức khỏe\")\n\n\n\n\nSức khỏe\n\n- [Giới trẻ](https://thanhnien.vn/gioi-tre.htm \"Giới trẻ\")\n\n\n\n\nGiới trẻ\n\n- [Giáo dục](https://thanhnien.vn/giao-duc.htm \"Giáo dục\")\n\n\n\n\nGiáo dục\n\n- [Du lịch](https://thanhnien.vn/du-lich.htm \"Du lịch\")\n\n\n\n\nDu lịch\n\n- [Văn hóa](https://thanhnien.vn/van-hoa.htm \"Văn hóa\")\n\n\n\n\nVăn hóa\n\n- [Giải trí](https://thanhnien.vn/giai-tri.htm \"Giải trí\")\n\n\n\n\nGiải trí\n\n- [Thể thao](https://thanhnien.vn/the-thao.htm \"Thể thao\")\n\n\n\n\nThể thao\n\n- [Công nghệ](https://thanhnien.vn/cong-nghe.htm \"Công nghệ\")\n\n\n\n\nCông nghệ -\nGame\n\n- [Xe](https://thanhnien.vn/xe.htm \"Xe\")\n\n\n\n\nXe\n\n- [Video](https://thanhnien.vn/video.htm \"Video\")\n\n\n\n\nVideo\n\n- [Tiêu dùng](https://thanhnien.vn/tieu-dung-thong-minh.htm \"Tiêu dùng thông minh\")\n\n\n\n\nTiêu dùng\n\n- [Thời trang trẻ](https://thanhnien.vn/thoi-trang-tre.htm \"Thời trang trẻ\")\n\n\n\n\nThời trang\ntrẻ\n\n\nĐóng menu\n\n\n[Chào ngày mới](https://thanhnien.vn/chao-ngay-moi.htm \"Chào ngày mới\") [Tin 24h](https://thanhnien.vn/tin-24h.htm \"Tin 24h\") [Tin thị trường](https://thanhnien.vn/thi-truong.htm \"Tin thị trường\") [Tin 360](https://thanhnien.vn/tin-nhanh-360.htm \"Tin 360\")\n\n[Video](https://thanhnien.vn/video.htm \"Video\") [Magazine](https://thanhnien.vn/magazine.htm \"Magazine\")\n\n[Tiện ích](https://thanhnien.vn/tien-ich/thoi-tiet.htm \"Tiện ích\") [Bạn cần biết](https://thanhnien.vn/ban-can-biet.htm \"Bạn cần biết\") [Liên hệ](https://thanhnien.vn/lien-he.htm \"Liên hệ\") [Thông tin toà soạn](https://thanhnien.vn/thong-tin-toa-soan.html \"Thông tin toà soạn\") [Liên hệ quảng cáo](https://banggia.thanhnien.vn/ \"Liên hệ quảng cáo\")\n\n[Bình luận](javacript:; \"Bình luận\")\n\n[Thời sự](https://thanhnien.vn/thoi-su.htm \"Thời sự\")\n\n# Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C\n\n[![Phan Hậu](https://static.thanhnien.com.vn/thanhnien.vn/image/ava_inter.png)](https://thanhnien.vn/author/phan-hau-185444.htm \"Phan Hậu\")\n\n[Phan Hậu](https://thanhnien.vn/author/phan-hau-185444.htm \"Phan Hậu\")\n\n02/06/2026 07:43 GMT+7\n\n\nFacebook\n\nChia sẻ\n\n\n[btn-sendmail](mailto:email@domain.com?subject=N%E1%BA%AFng%20n%C3%B3ng%20gay%20g%E1%BA%AFt%20h%C6%A1n%2C%20mi%E1%BB%81n%20Trung%20c%C3%B3%20n%C6%A1i%20tr%C3%AAn%2039%20%C4%91%E1%BB%99%20C&body=https%3A%2F%2Fthanhnien.vn%2Fnang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm)\n\n## Dự báo thời tiết hôm nay 2.6, nắng nóng ở miền Bắc, miền Trung gia tăng cường độ, gay gắt hơn. Dự báo thời tiết ngày mai 3.6, miền Trung có nơi nắng nóng trên 39 độ C.\n\nDự báo thời tiết hôm nay 1.6, Trung tâm Dự báo khí tượng thủy văn quốc gia cho biết, vùng [nắng nóng](https://thanhnien.vn/dot-nang-nong-o-mien-bac-mien-trung-keo-dai-den-bao-gio-185260601072708707.htm \"nắng nóng\") ở miền Bắc, miền Trung tiếp tục mở rộng hơn, gia tăng cường độ so với ngày hôm qua 1.6.\n\n[![Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C- Ảnh 1.](https://images2.thanhnien.vn/thumb_w/640/528068263637045248/2026/5/25/edit-photo-1779717258198-17797172981712034434620.jpeg)](https://images2.thanhnien.vn/528068263637045248/2026/5/25/edit-photo-1779717258198-17797172981712034434620.jpeg \"Dự báo thời tiết hôm nay 2.6, nắng nóng mạnh hơn so với ngày hôm qua 1.6\")\n\nDự báo thời tiết hôm nay 2.6, nắng nóng mạnh hơn so với ngày hôm qua 1.6\n\nẢNH: ĐÌNH HUY\n\nTrong ngày 1.6, các tỉnh miền Bắc (trừ Quảng Ninh, Hải Phòng); khu vực miền Trung từ Thanh Hóa đến TP.Đà Nẵng và phía đông tỉnh Quảng Ngãi có nắng nóng, một số nơi có nắng nóng gay gắt, nhiệt độ cao nhất ngày phổ biến 35 - 37 độ C, có nơi trên 37 độ C như các trạm: Yên Châu (Sơn La) 39,7 độ C; Bắc Mê (Tuyên Quang)"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Bài báo \"Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C\" trên Thanh Niên đưa tin về tình hình thời tiết nắng nóng tại miền Trung và miền Bắc Việt Nam. Dưới đây là tóm tắt nội dung chính:\n\n- **Thời tiết nắng nóng**: Dự báo thời tiết cho thấy nắng nóng ở miền Bắc và miền Trung sẽ gia tăng cường độ. Vào ngày 2 tháng 6, miền Trung có thể ghi nhận nhiệt độ lên tới trên 39 độ C.\n- **Nhiệt độ cụ thể**: Trong ngày 1 tháng 6, nhiều tỉnh miền Bắc và miền Trung đã trải qua nắng nóng, với nhiệt độ cao nhất phổ biến từ 35 - 37 độ C. Một số nơi như Yên Châu (Sơn La) ghi nhận nhiệt độ lên tới 39,7 độ C.\n\nBài báo nhấn mạnh sự gia tăng cường độ nắng nóng so với ngày trước đó và cảnh báo về tình hình thời tiết trong những ngày tới.\n\nBạn có thể đọc bài báo đầy đủ [tại đây](https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm).",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm",
+            "items": [
+              {
+                "title": "Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C",
+                "url": "https://thanhnien.vn/nang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm",
+                "source": "thanhnien.vn",
+                "summary": "- [Trang chủ](https://thanhnien.vn/ \"Trang chủ\")\n- [Chính trị](https://thanhnien.vn/chinh-tri.htm \"Chính trị\")\n\n\n\n\nChính trị\n\n- [Thời sự](https://thanhnien.vn/thoi-su.htm \"Thời sự\")\n\n\n\n\nThời sự\n\n- [Thế giới](https://thanhnien.vn/the-gioi.htm \"Thế giới\")\n\n\n\n\nThế giới\n\n- [Kinh tế](https://thanhnien.vn/kinh-te.htm \"Kinh tế\")\n\n\n\n\nKinh tế\n\n- [Đời sống](https://thanhnien.vn/doi-song.htm \"Đời sống\")\n\n\n\n\nĐời sống\n\n- [Sức khỏe](https://thanhnien.vn/suc-khoe.htm \"Sức khỏe\")\n\n\n\n\nSức khỏe\n\n- [Giới trẻ](https://thanhnien.vn/gioi-tre.htm \"Giới trẻ\")\n\n\n\n\nGiới trẻ\n\n- [Giáo dục](https://thanhnien.vn/giao-duc.htm \"Giáo dục\")\n\n\n\n\nGiáo dục\n\n- [Du lịch](https://thanhnien.vn/du-lich.htm \"Du lịch\")\n\n\n\n\nDu lịch\n\n- [Văn hóa](https://thanhnien.vn/van-hoa.htm \"Văn hóa\")\n\n\n\n\nVăn hóa\n\n- [Giải trí](https://thanhnien.vn/giai-tri.htm \"Giải trí\")\n\n\n\n\nGiải trí\n\n- [Thể thao](https://thanhnien.vn/the-thao.htm \"Thể thao\")\n\n\n\n\nThể thao\n\n- [Công nghệ](https://thanhnien.vn/cong-nghe.htm \"Công nghệ\")\n\n\n\n\nCông nghệ -\nGame\n\n- [Xe](https://thanhnien.vn/xe.htm \"Xe\")\n\n\n\n\nXe\n\n- [Video](https://thanhnien.vn/video.htm \"Video\")\n\n\n\n\nVideo\n\n- [Tiêu dùng](https://thanhnien.vn/tieu-dung-thong-minh.htm \"Tiêu dùng thông minh\")\n\n\n\n\nTiêu dùng\n\n- [Thời trang trẻ](https://thanhnien.vn/thoi-trang-tre.htm \"Thời trang trẻ\")\n\n\n\n\nThời trang\ntrẻ\n\n\nĐóng menu\n\n\n[Chào ngày mới](https://thanhnien.vn/chao-ngay-moi.htm \"Chào ngày mới\") [Tin 24h](https://thanhnien.vn/tin-24h.htm \"Tin 24h\") [Tin thị trường](https://thanhnien.vn/thi-truong.htm \"Tin thị trường\") [Tin 360](https://thanhnien.vn/tin-nhanh-360.htm \"Tin 360\")\n\n[Video](https://thanhnien.vn/video.htm \"Video\") [Magazine](https://thanhnien.vn/magazine.htm \"Magazine\")\n\n[Tiện ích](https://thanhnien.vn/tien-ich/thoi-tiet.htm \"Tiện ích\") [Bạn cần biết](https://thanhnien.vn/ban-can-biet.htm \"Bạn cần biết\") [Liên hệ](https://thanhnien.vn/lien-he.htm \"Liên hệ\") [Thông tin toà soạn](https://thanhnien.vn/thong-tin-toa-soan.html \"Thông tin toà soạn\") [Liên hệ quảng cáo](https://banggia.thanhnien.vn/ \"Liên hệ quảng cáo\")\n\n[Bình luận](javacript:; \"Bình luận\")\n\n[Thời sự](https://thanhnien.vn/thoi-su.htm \"Thời sự\")\n\n# Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C\n\n[![Phan Hậu](https://static.thanhnien.com.vn/thanhnien.vn/image/ava_inter.png)](https://thanhnien.vn/author/phan-hau-185444.htm \"Phan Hậu\")\n\n[Phan Hậu](https://thanhnien.vn/author/phan-hau-185444.htm \"Phan Hậu\")\n\n02/06/2026 07:43 GMT+7\n\n\nFacebook\n\nChia sẻ\n\n\n[btn-sendmail](mailto:email@domain.com?subject=N%E1%BA%AFng%20n%C3%B3ng%20gay%20g%E1%BA%AFt%20h%C6%A1n%2C%20mi%E1%BB%81n%20Trung%20c%C3%B3%20n%C6%A1i%20tr%C3%AAn%2039%20%C4%91%E1%BB%99%20C&body=https%3A%2F%2Fthanhnien.vn%2Fnang-nong-gay-gat-hon-mien-trung-co-noi-tren-39-do-c-185260602072710564.htm)\n\n## Dự báo thời tiết hôm nay 2.6, nắng nóng ở miền Bắc, miền Trung gia tăng cường độ, gay gắt hơn. Dự báo thời tiết ngày mai 3.6, miền Trung có nơi nắng nóng trên 39 độ C.\n\nDự báo thời tiết hôm nay 1.6, Trung tâm Dự báo khí tượng thủy văn quốc gia cho biết, vùng [nắng nóng](https://thanhnien.vn/dot-nang-nong-o-mien-bac-mien-trung-keo-dai-den-bao-gio-185260601072708707.htm \"nắng nóng\") ở miền Bắc, miền Trung tiếp tục mở rộng hơn, gia tăng cường độ so với ngày hôm qua 1.6.\n\n[![Nắng nóng gay gắt hơn, miền Trung có nơi trên 39 độ C- Ảnh 1.](https://images2.thanhnien.vn/thumb_w/640/528068263637045248/2026/5/25/edit-photo-1779717258198-17797172981712034434620.jpeg)](https://images2.thanhnien.vn/528068263637045248/2026/5/25/edit-photo-1779717258198-17797172981712034434620.jpeg \"Dự báo thời tiết hôm nay 2.6, nắng nóng mạnh hơn so với ngày hôm qua 1.6\")\n\nDự báo thời tiết hôm nay 2.6, nắng nóng mạnh hơn so với ngày hôm qua 1.6\n\nẢNH: ĐÌNH HUY\n\nTrong ngày 1.6, các tỉnh miền Bắc (trừ Quảng Ninh, Hải Phòng); khu vực miền Trung từ Thanh Hóa đến TP.Đà Nẵng và phía đông tỉnh Quảng Ngãi có nắng nóng, một số nơi có nắng nóng gay gắt, nhiệt độ cao nhất ngày phổ biến 35 - 37 độ C, có nơi trên 37 độ C như các trạm: Yên Châu (Sơn La) 39,7 độ C; Bắc Mê (Tuyên Quang)"
+              }
+            ]
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:04:53"
+    },
+    {
+      "turn_index": 3,
+      "started_at": "2026-06-02T13:33:03",
+      "user": "Tin tức AI hôm nay có gì nổi bật?",
+      "status": "answered",
+      "assistant_text": "Dưới đây là một số tin tức nổi bật về AI hôm nay:\n\n1. **AI ad campaigns slam Trahan** - Một nhóm an toàn AI đã triển khai chiến dịch quảng cáo tấn công đại diện Lori Trahan, cho rằng bà đang ủng hộ các \"oligarch AI\" trong các nỗ lực lập pháp của mình. Nvidia cũng đã ra mắt một mô hình mô phỏng mới cho robot. [Đọc thêm](https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/) từ Washington Post.\n\n2. **OpenAI trong tình trạng pháp lý** - OpenAI đang đối mặt với nhiều vụ kiện, điều này cho thấy sự gia tăng lo ngại về trách nhiệm pháp lý trong ngành công nghệ AI. [Xem chi tiết](https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/) trên Above the Law.\n\n3. **Sam Altman về việc tuyển dụng** - CEO của OpenAI, Sam Altman, cho biết các công ty áp dụng AI nhiều nhất cũng là những công ty đang tuyển dụng nhiều nhất. Ông chỉ ra rằng những công ty công khai trích dẫn AI như lý do cho việc sa thải thường là những công ty ít áp dụng AI nhất. [Tìm hiểu thêm](https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62).\n\n4. **Dự báo chi tiêu quảng cáo kỹ thuật số tại Vương quốc Anh** - AI được dự đoán sẽ thúc đẩy 18 tỷ bảng Anh trong chi tiêu quảng cáo kỹ thuật số của Vương quốc Anh vào năm 2030, chiếm một phần ba tổng chi tiêu quảng cáo. [Chi tiết tại Marketing Week](https://www.marketingweek.com/iab-uk-ai-ad-spend/).\n\n5. **DuckDuckGo ra mắt tiện ích tìm kiếm không AI** - Sau khi người dùng phản đối tìm kiếm AI của Google, DuckDuckGo đã ra mắt các tiện ích mở rộng tìm kiếm không AI, cho phép người dùng dễ dàng chuyển sang tìm kiếm không AI. [Đọc thêm](https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html).\n\nNếu bạn cần thêm thông tin chi tiết về bất kỳ tin tức nào, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "lookup",
+              "args": {
+                "query": "AI",
+                "topic": "news",
+                "timeframe": "day"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "lookup",
+              "args": {
+                "query": "AI",
+                "topic": "news",
+                "timeframe": "day"
+              },
+              "result": {
+                "tool": "web_search",
+                "query": "AI",
+                "topic": "news",
+                "timeframe": "day",
+                "items": [
+                  {
+                    "title": "AI & Tech Brief: Exclusive | AI ad campaigns slam Trahan - The Washington Post",
+                    "url": "https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/",
+                    "source": "washingtonpost.com",
+                    "summary": "AI & Tech Brief from WP Intelligence. # AI & Tech Brief: Exclusive | AI ad campaigns slam Trahan. Plus, Anthropic files for a blockbuster initial public offering. Make us preferred on Google. Sign up here to get this newsletter in your inbox. * **Exclusive:** AI safety group Americans for Responsible Innovation rolls out a six-figure ad campaign this week attacking Rep. Lori Trahan (D-Massachusetts), arguing that she’s “taking the side” of AI oligarchs in her bipartisan legislative efforts. * The AI safety community doesn’t want to hand power of AI regulation to President Donald Trump’s administration now that states are passing more rigorous AI laws — and the California and New York attorneys general are challenging big AI companies. * Nvidia is rolling out a new “world model” simulator for robots and a new design platform for robot developers. In doing so, the company is running the same business playbook it did to become so dominant in the chip market.",
+                    "score": 0.8749346
+                  },
+                  {
+                    "title": "OpenAI Is Latest Tech Company In The Litigation Hot Seat - Page 2 of 2 - Above the Law",
+                    "url": "https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/",
+                    "source": "abovethelaw.com",
+                    "summary": "# OpenAI Is Latest Tech Company In The Litigation Hot Seat - Page 2 of 2 - Above the Law. Open navigationAbove the LawToggle Search. # OpenAI Is Latest Tech Company In The Litigation Hot Seat. ## More from Above the Law. ## From the Above the Law Network. Image 6: AI Artificial Intelligence (AI) Eve Legal Legal Tech Sponsored Content Technology. Image 7: Legal and operational leaders are gathering May 6–7 in Fort Lauderdale to confront the questions the industry hasn't answered—with a keynote from Amanda Knox setting the tone. This information might be about you, your preferences or your device and is mostly used to make the site work as you expect it to. However, blocking some types of cookies may impact your experience of the site and the services we are able to offer. You can set your browser to block or alert you about these cookies, but some parts of the site will not then work.",
+                    "score": 0.86339164
+                  },
+                  {
+                    "title": "Sam Altman Says AI-Adopting Companies Are Hiring - Let's Data Science",
+                    "url": "https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62",
+                    "source": "letsdatascience.com",
+                    "summary": "Business Insider reports that OpenAI CEO Sam Altman told CNBC on June 1, 2026, that \"the companies that I know that have adopted AI the most are also the ones hiring the most.\" Business Insider quotes Altman saying companies that publicly cite AI as a reason for layoffs tend to be adopting AI the least, and that AI can be a \"convenient way\" to explain layoffs. Business Insider reports that OpenAI CEO **Sam Altman** told CNBC on June 1, 2026, \"the companies that I know that have adopted AI the most are also the ones hiring the most.\" Business Insider quotes Altman as saying that companies publicly citing AI as a reason for layoffs \"are the ones adopting AI the least,\" and that AI can be a \"convenient way\" for companies to explain layoffs. Business Insider also lists recent layoffs at several tech companies and cites a March Pew Research Center poll that found elevated public concern about AI.",
+                    "score": 0.81286734
+                  },
+                  {
+                    "title": "AI expected to drive £18bn of UK digital ad spend by 2030 - Marketing Week",
+                    "url": "https://www.marketingweek.com/iab-uk-ai-ad-spend/",
+                    "source": "marketingweek.com",
+                    "summary": "# AI expected to drive £18bn of UK digital ad spend by 2030. IAB UK forecasts AI will drive one-third of UK digital ad spend by 2030 as advertisers adapt to changes in search, content and media buying. One-third (32%) of UK digital ad spend, equivalent to around £18bn, will be AI-driven by 2030, according to new forecasts from IAB UK. According to ‘The State of AI in Advertising: Charting the Shift from Automation to Autonomy, ‘ AI is expected to influence ad spend across four key areas– content creation, zero-click search, agentic trading and agentic commerce. To estimate the likely scale of change, IAB UK developed a series of ‘AI overlays’ that estimate the proportion of media spend by channel that is ‘AI-driven’, defined as a media buying and delivery decision made by an AI-powered algorithm. IAB UK forecasts most of the growth will come from the adoption of AI buying tools in search, such as Google’s AI Max and PMax; social, including Meta’s Advantage+; and display advertising through agentic programmatic buying.",
+                    "score": 0.80069196
+                  },
+                  {
+                    "title": "DuckDuckGo launches no-AI search extensions after users reject Google's AI-first Search - TweakTown",
+                    "url": "https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html",
+                    "source": "tweaktown.com",
+                    "summary": "# DuckDuckGo launches no-AI search extensions after users reject Google's AI-first Search. ## Traffic to DuckDuckGo's no-AI search page tripled after Google's overhaul, and the company is now making it even easier to ditch AI search entirely. **TL;DR:** Following Google's major AI-driven Search update, many users have shifted to DuckDuckGo, whose no-AI search traffic tripled and app installs surged. However, a significant number of users have pushed back against the **AI-heavy** direction and, in the process, many have ended up at DuckDuckGo. Traffic to DuckDuckGo's No AI search page tripled after Google's announcement and has continued to surge. To keep the momentum going, the company has now launched new browser extensions for Chrome and Firefox that let users set its AI-free search page, noai.duckduckgo.com, as their default search engine. From there, the Duck.ai chatbot can be disabled entirely, and the app can be set to open with a plain search interface by default every time.",
+                    "score": 0.7520126
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Dưới đây là một số tin tức nổi bật về AI hôm nay:\n\n1. **AI ad campaigns slam Trahan** - Một nhóm an toàn AI đã triển khai chiến dịch quảng cáo tấn công đại diện Lori Trahan, cho rằng bà đang ủng hộ các \"oligarch AI\" trong các nỗ lực lập pháp của mình. Nvidia cũng đã ra mắt một mô hình mô phỏng mới cho robot. [Đọc thêm](https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/) từ Washington Post.\n\n2. **OpenAI trong tình trạng pháp lý** - OpenAI đang đối mặt với nhiều vụ kiện, điều này cho thấy sự gia tăng lo ngại về trách nhiệm pháp lý trong ngành công nghệ AI. [Xem chi tiết](https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/) trên Above the Law.\n\n3. **Sam Altman về việc tuyển dụng** - CEO của OpenAI, Sam Altman, cho biết các công ty áp dụng AI nhiều nhất cũng là những công ty đang tuyển dụng nhiều nhất. Ông chỉ ra rằng những công ty công khai trích dẫn AI như lý do cho việc sa thải thường là những công ty ít áp dụng AI nhất. [Tìm hiểu thêm](https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62).\n\n4. **Dự báo chi tiêu quảng cáo kỹ thuật số tại Vương quốc Anh** - AI được dự đoán sẽ thúc đẩy 18 tỷ bảng Anh trong chi tiêu quảng cáo kỹ thuật số của Vương quốc Anh vào năm 2030, chiếm một phần ba tổng chi tiêu quảng cáo. [Chi tiết tại Marketing Week](https://www.marketingweek.com/iab-uk-ai-ad-spend/).\n\n5. **DuckDuckGo ra mắt tiện ích tìm kiếm không AI** - Sau khi người dùng phản đối tìm kiếm AI của Google, DuckDuckGo đã ra mắt các tiện ích mở rộng tìm kiếm không AI, cho phép người dùng dễ dàng chuyển sang tìm kiếm không AI. [Đọc thêm](https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html).\n\nNếu bạn cần thêm thông tin chi tiết về bất kỳ tin tức nào, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "AI & Tech Brief: Exclusive | AI ad campaigns slam Trahan - The Washington Post",
+                "url": "https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/",
+                "source": "washingtonpost.com",
+                "summary": "AI & Tech Brief from WP Intelligence. # AI & Tech Brief: Exclusive | AI ad campaigns slam Trahan. Plus, Anthropic files for a blockbuster initial public offering. Make us preferred on Google. Sign up here to get this newsletter in your inbox. * **Exclusive:** AI safety group Americans for Responsible Innovation rolls out a six-figure ad campaign this week attacking Rep. Lori Trahan (D-Massachusetts), arguing that she’s “taking the side” of AI oligarchs in her bipartisan legislative efforts. * The AI safety community doesn’t want to hand power of AI regulation to President Donald Trump’s administration now that states are passing more rigorous AI laws — and the California and New York attorneys general are challenging big AI companies. * Nvidia is rolling out a new “world model” simulator for robots and a new design platform for robot developers. In doing so, the company is running the same business playbook it did to become so dominant in the chip market.",
+                "score": 0.8749346
+              },
+              {
+                "title": "OpenAI Is Latest Tech Company In The Litigation Hot Seat - Page 2 of 2 - Above the Law",
+                "url": "https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/",
+                "source": "abovethelaw.com",
+                "summary": "# OpenAI Is Latest Tech Company In The Litigation Hot Seat - Page 2 of 2 - Above the Law. Open navigationAbove the LawToggle Search. # OpenAI Is Latest Tech Company In The Litigation Hot Seat. ## More from Above the Law. ## From the Above the Law Network. Image 6: AI Artificial Intelligence (AI) Eve Legal Legal Tech Sponsored Content Technology. Image 7: Legal and operational leaders are gathering May 6–7 in Fort Lauderdale to confront the questions the industry hasn't answered—with a keynote from Amanda Knox setting the tone. This information might be about you, your preferences or your device and is mostly used to make the site work as you expect it to. However, blocking some types of cookies may impact your experience of the site and the services we are able to offer. You can set your browser to block or alert you about these cookies, but some parts of the site will not then work.",
+                "score": 0.86339164
+              },
+              {
+                "title": "Sam Altman Says AI-Adopting Companies Are Hiring - Let's Data Science",
+                "url": "https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62",
+                "source": "letsdatascience.com",
+                "summary": "Business Insider reports that OpenAI CEO Sam Altman told CNBC on June 1, 2026, that \"the companies that I know that have adopted AI the most are also the ones hiring the most.\" Business Insider quotes Altman saying companies that publicly cite AI as a reason for layoffs tend to be adopting AI the least, and that AI can be a \"convenient way\" to explain layoffs. Business Insider reports that OpenAI CEO **Sam Altman** told CNBC on June 1, 2026, \"the companies that I know that have adopted AI the most are also the ones hiring the most.\" Business Insider quotes Altman as saying that companies publicly citing AI as a reason for layoffs \"are the ones adopting AI the least,\" and that AI can be a \"convenient way\" for companies to explain layoffs. Business Insider also lists recent layoffs at several tech companies and cites a March Pew Research Center poll that found elevated public concern about AI.",
+                "score": 0.81286734
+              },
+              {
+                "title": "AI expected to drive £18bn of UK digital ad spend by 2030 - Marketing Week",
+                "url": "https://www.marketingweek.com/iab-uk-ai-ad-spend/",
+                "source": "marketingweek.com",
+                "summary": "# AI expected to drive £18bn of UK digital ad spend by 2030. IAB UK forecasts AI will drive one-third of UK digital ad spend by 2030 as advertisers adapt to changes in search, content and media buying. One-third (32%) of UK digital ad spend, equivalent to around £18bn, will be AI-driven by 2030, according to new forecasts from IAB UK. According to ‘The State of AI in Advertising: Charting the Shift from Automation to Autonomy, ‘ AI is expected to influence ad spend across four key areas– content creation, zero-click search, agentic trading and agentic commerce. To estimate the likely scale of change, IAB UK developed a series of ‘AI overlays’ that estimate the proportion of media spend by channel that is ‘AI-driven’, defined as a media buying and delivery decision made by an AI-powered algorithm. IAB UK forecasts most of the growth will come from the adoption of AI buying tools in search, such as Google’s AI Max and PMax; social, including Meta’s Advantage+; and display advertising through agentic programmatic buying.",
+                "score": 0.80069196
+              },
+              {
+                "title": "DuckDuckGo launches no-AI search extensions after users reject Google's AI-first Search - TweakTown",
+                "url": "https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html",
+                "source": "tweaktown.com",
+                "summary": "# DuckDuckGo launches no-AI search extensions after users reject Google's AI-first Search. ## Traffic to DuckDuckGo's no-AI search page tripled after Google's overhaul, and the company is now making it even easier to ditch AI search entirely. **TL;DR:** Following Google's major AI-driven Search update, many users have shifted to DuckDuckGo, whose no-AI search traffic tripled and app installs surged. However, a significant number of users have pushed back against the **AI-heavy** direction and, in the process, many have ended up at DuckDuckGo. Traffic to DuckDuckGo's No AI search page tripled after Google's announcement and has continued to surge. To keep the momentum going, the company has now launched new browser extensions for Chrome and Firefox that let users set its AI-free search page, noai.duckduckgo.com, as their default search engine. From there, the Duck.ai chatbot can be disabled entirely, and the app can be set to open with a plain search interface by default every time.",
+                "score": 0.7520126
+              }
+            ]
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:33:18"
+    },
+    {
+      "turn_index": 4,
+      "started_at": "2026-06-02T13:38:09",
+      "user": "Tóm tắt 5 tweet mới nhất giúp mình",
+      "status": "answered",
+      "assistant_text": "Bạn có thể cho tôi biết tài khoản Twitter/X nào mà bạn muốn lấy 5 tweet mới nhất không?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": "Bạn có thể cho tôi biết tài khoản Twitter/X nào mà bạn muốn lấy 5 tweet mới nhất không?",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [],
+      "ended_at": "2026-06-02T13:38:11"
+    },
+    {
+      "turn_index": 5,
+      "started_at": "2026-06-02T13:40:03",
+      "user": "https://x.com/Agronomme_",
+      "status": "answered",
+      "assistant_text": "Hiện tại, tôi không thể truy cập vào tài khoản Twitter của Agronomme để lấy 5 tweet mới nhất do lỗi quyền truy cập. Bạn có thể kiểm tra trực tiếp trên trang Twitter của họ hoặc cung cấp một tài khoản khác mà bạn muốn tôi tìm kiếm.",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "timeline",
+              "args": {
+                "screenname": "Agronomme_",
+                "limit": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "timeline",
+              "args": {
+                "screenname": "Agronomme_",
+                "limit": 5
+              },
+              "result": {
+                "tool": "get_user_tweets",
+                "error": "HTTPError",
+                "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=Agronomme_"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Hiện tại, tôi không thể truy cập vào tài khoản Twitter của Agronomme để lấy 5 tweet mới nhất do lỗi quyền truy cập. Bạn có thể kiểm tra trực tiếp trên trang Twitter của họ hoặc cung cấp một tài khoản khác mà bạn muốn tôi tìm kiếm.",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "Agronomme_",
+            "limit": 5
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=Agronomme_"
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:40:10"
+    },
+    {
+      "turn_index": 6,
+      "started_at": "2026-06-02T13:41:28",
+      "user": "https://x.com/snsnokyoufu\nvậy thử tài khoản này",
+      "status": "answered",
+      "assistant_text": "Tôi không thể truy cập vào tài khoản Twitter của \"snsnokyoufu\" để lấy 5 tweet mới nhất do lỗi quyền truy cập. Bạn có thể kiểm tra trực tiếp trên trang Twitter của họ hoặc cung cấp một tài khoản khác mà bạn muốn tôi tìm kiếm.",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "timeline",
+              "args": {
+                "screenname": "snsnokyoufu",
+                "limit": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "timeline",
+              "args": {
+                "screenname": "snsnokyoufu",
+                "limit": 5
+              },
+              "result": {
+                "tool": "get_user_tweets",
+                "error": "HTTPError",
+                "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=snsnokyoufu"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Tôi không thể truy cập vào tài khoản Twitter của \"snsnokyoufu\" để lấy 5 tweet mới nhất do lỗi quyền truy cập. Bạn có thể kiểm tra trực tiếp trên trang Twitter của họ hoặc cung cấp một tài khoản khác mà bạn muốn tôi tìm kiếm.",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "snsnokyoufu",
+            "limit": 5
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=snsnokyoufu"
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:41:33"
+    },
+    {
+      "turn_index": 7,
+      "started_at": "2026-06-02T13:41:53",
+      "user": "Đăng bản tin này lên Telegram giúp mình",
+      "status": "waiting_for_user",
+      "assistant_text": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "clarify",
+              "args": {
+                "question": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+                "response_type": "yes_no"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "clarify",
+              "args": {
+                "question": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+                "response_type": "yes_no"
+              },
+              "result": {
+                "tool": "ask_user",
+                "question": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+                "response_type": "yes_no",
+                "options": [],
+                "awaiting_user": true
+              }
+            }
+          ]
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có chắc chắn muốn đăng bản tin này lên Telegram không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:41:55"
+    },
+    {
+      "turn_index": 8,
+      "started_at": "2026-06-02T13:58:20",
+      "user": "Đăng bản tin này lên Telegram giúp mình",
+      "status": "answered",
+      "assistant_text": "Rất tiếc, nhưng tôi không thể đăng bản tin lên Telegram do thiếu thông tin cần thiết. Nếu bạn cần hỗ trợ khác hoặc muốn chia sẻ thông tin theo cách khác, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "send",
+              "args": {
+                "text": "Dưới đây là một số tin tức nổi bật về AI hôm nay:\n\n1. **AI ad campaigns slam Trahan** - Một nhóm an toàn AI đã triển khai chiến dịch quảng cáo tấn công đại diện Lori Trahan, cho rằng bà đang ủng hộ các \"oligarch AI\" trong các nỗ lực lập pháp của mình. Nvidia cũng đã ra mắt một mô hình mô phỏng mới cho robot. [Đọc thêm](https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/) từ Washington Post.\n\n2. **OpenAI trong tình trạng pháp lý** - OpenAI đang đối mặt với nhiều vụ kiện, điều này cho thấy sự gia tăng lo ngại về trách nhiệm pháp lý trong ngành công nghệ AI. [Xem chi tiết](https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/) trên Above the Law.\n\n3. **Sam Altman về việc tuyển dụng** - CEO của OpenAI, Sam Altman, cho biết các công ty áp dụng AI nhiều nhất cũng là những công ty đang tuyển dụng nhiều nhất. Ông chỉ ra rằng những công ty công khai trích dẫn AI như lý do cho việc sa thải thường là những công ty ít áp dụng AI nhất. [Tìm hiểu thêm](https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62).\n\n4. **Dự báo chi tiêu quảng cáo kỹ thuật số tại Vương quốc Anh** - AI được dự đoán sẽ thúc đẩy 18 tỷ bảng Anh trong chi tiêu quảng cáo kỹ thuật số của Vương quốc Anh vào năm 2030, chiếm một phần ba tổng chi tiêu quảng cáo. [Chi tiết tại Marketing Week](https://www.marketingweek.com/iab-uk-ai-ad-spend/).\n\n5. **DuckDuckGo ra mắt tiện ích tìm kiếm không AI** - Sau khi người dùng phản đối tìm kiếm AI của Google, DuckDuckGo đã ra mắt các tiện ích mở rộng tìm kiếm không AI, cho phép người dùng dễ dàng chuyển sang tìm kiếm không AI. [Đọc thêm](https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html).",
+                "confirmed": true
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "send",
+              "args": {
+                "text": "Dưới đây là một số tin tức nổi bật về AI hôm nay:\n\n1. **AI ad campaigns slam Trahan** - Một nhóm an toàn AI đã triển khai chiến dịch quảng cáo tấn công đại diện Lori Trahan, cho rằng bà đang ủng hộ các \"oligarch AI\" trong các nỗ lực lập pháp của mình. Nvidia cũng đã ra mắt một mô hình mô phỏng mới cho robot. [Đọc thêm](https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/) từ Washington Post.\n\n2. **OpenAI trong tình trạng pháp lý** - OpenAI đang đối mặt với nhiều vụ kiện, điều này cho thấy sự gia tăng lo ngại về trách nhiệm pháp lý trong ngành công nghệ AI. [Xem chi tiết](https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/) trên Above the Law.\n\n3. **Sam Altman về việc tuyển dụng** - CEO của OpenAI, Sam Altman, cho biết các công ty áp dụng AI nhiều nhất cũng là những công ty đang tuyển dụng nhiều nhất. Ông chỉ ra rằng những công ty công khai trích dẫn AI như lý do cho việc sa thải thường là những công ty ít áp dụng AI nhất. [Tìm hiểu thêm](https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62).\n\n4. **Dự báo chi tiêu quảng cáo kỹ thuật số tại Vương quốc Anh** - AI được dự đoán sẽ thúc đẩy 18 tỷ bảng Anh trong chi tiêu quảng cáo kỹ thuật số của Vương quốc Anh vào năm 2030, chiếm một phần ba tổng chi tiêu quảng cáo. [Chi tiết tại Marketing Week](https://www.marketingweek.com/iab-uk-ai-ad-spend/).\n\n5. **DuckDuckGo ra mắt tiện ích tìm kiếm không AI** - Sau khi người dùng phản đối tìm kiếm AI của Google, DuckDuckGo đã ra mắt các tiện ích mở rộng tìm kiếm không AI, cho phép người dùng dễ dàng chuyển sang tìm kiếm không AI. [Đọc thêm](https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html).",
+                "confirmed": true
+              },
+              "result": {
+                "tool": "send_telegram",
+                "error": "RuntimeError",
+                "message": "Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID env var"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Rất tiếc, nhưng tôi không thể đăng bản tin lên Telegram do thiếu thông tin cần thiết. Nếu bạn cần hỗ trợ khác hoặc muốn chia sẻ thông tin theo cách khác, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "Dưới đây là một số tin tức nổi bật về AI hôm nay:\n\n1. **AI ad campaigns slam Trahan** - Một nhóm an toàn AI đã triển khai chiến dịch quảng cáo tấn công đại diện Lori Trahan, cho rằng bà đang ủng hộ các \"oligarch AI\" trong các nỗ lực lập pháp của mình. Nvidia cũng đã ra mắt một mô hình mô phỏng mới cho robot. [Đọc thêm](https://www.washingtonpost.com/wp-intelligence/ai-tech-brief/2026/06/01/ai-tech-brief-exclusive-ai-ad-campaigns-slam-trahan/) từ Washington Post.\n\n2. **OpenAI trong tình trạng pháp lý** - OpenAI đang đối mặt với nhiều vụ kiện, điều này cho thấy sự gia tăng lo ngại về trách nhiệm pháp lý trong ngành công nghệ AI. [Xem chi tiết](https://abovethelaw.com/2026/06/openai-is-latest-tech-company-in-the-litigation-hot-seat/2/) trên Above the Law.\n\n3. **Sam Altman về việc tuyển dụng** - CEO của OpenAI, Sam Altman, cho biết các công ty áp dụng AI nhiều nhất cũng là những công ty đang tuyển dụng nhiều nhất. Ông chỉ ra rằng những công ty công khai trích dẫn AI như lý do cho việc sa thải thường là những công ty ít áp dụng AI nhất. [Tìm hiểu thêm](https://letsdatascience.com/news/sam-altman-says-ai-adopting-companies-are-hiring-132adf62).\n\n4. **Dự báo chi tiêu quảng cáo kỹ thuật số tại Vương quốc Anh** - AI được dự đoán sẽ thúc đẩy 18 tỷ bảng Anh trong chi tiêu quảng cáo kỹ thuật số của Vương quốc Anh vào năm 2030, chiếm một phần ba tổng chi tiêu quảng cáo. [Chi tiết tại Marketing Week](https://www.marketingweek.com/iab-uk-ai-ad-spend/).\n\n5. **DuckDuckGo ra mắt tiện ích tìm kiếm không AI** - Sau khi người dùng phản đối tìm kiếm AI của Google, DuckDuckGo đã ra mắt các tiện ích mở rộng tìm kiếm không AI, cho phép người dùng dễ dàng chuyển sang tìm kiếm không AI. [Đọc thêm](https://www.tweaktown.com/news/111963/duckduckgo-launches-no-ai-search-extensions-after-users-reject-googles-ai-first-search/index.html).",
+            "confirmed": true
+          },
+          "result": {
+            "tool": "send_telegram",
+            "error": "RuntimeError",
+            "message": "Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID env var"
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:58:37"
+    },
+    {
+      "turn_index": 9,
+      "started_at": "2026-06-02T13:59:08",
+      "user": "Đăng bản tin này lên Telegram giúp mình",
+      "status": "answered",
+      "assistant_text": "Tôi cần bạn xác nhận trước khi đăng bản tin này lên Telegram. Bạn có chắc chắn muốn tiếp tục không?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "send",
+              "args": {
+                "text": "Tôi không thể đăng bản tin lên Telegram do thiếu thông tin cần thiết. Nếu bạn cần hỗ trợ khác hoặc muốn chia sẻ thông tin theo cách khác, hãy cho tôi biết!",
+                "confirmed": false
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "send",
+              "args": {
+                "text": "Tôi không thể đăng bản tin lên Telegram do thiếu thông tin cần thiết. Nếu bạn cần hỗ trợ khác hoặc muốn chia sẻ thông tin theo cách khác, hãy cho tôi biết!",
+                "confirmed": false
+              },
+              "result": {
+                "tool": "send_telegram",
+                "status": "needs_confirmation",
+                "message": "Only send after the user explicitly confirms."
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Tôi cần bạn xác nhận trước khi đăng bản tin này lên Telegram. Bạn có chắc chắn muốn tiếp tục không?",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "Tôi không thể đăng bản tin lên Telegram do thiếu thông tin cần thiết. Nếu bạn cần hỗ trợ khác hoặc muốn chia sẻ thông tin theo cách khác, hãy cho tôi biết!",
+            "confirmed": false
+          },
+          "result": {
+            "tool": "send_telegram",
+            "status": "needs_confirmation",
+            "message": "Only send after the user explicitly confirms."
+          }
+        }
+      ],
+      "ended_at": "2026-06-02T13:59:11"
+    }
+  ],
+  "source": "streamlit_ui"
+}

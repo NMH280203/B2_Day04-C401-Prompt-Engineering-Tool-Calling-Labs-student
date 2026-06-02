@@ -1,7 +1,108 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "description": "Team eval cases — 5 single-turn + 5 multi-turn.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_timeline_vs_search",
+      "phase": "B",
+      "query": "3 tweet mới nhất của Satya Nadella trên X?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "satyanadella", "limit": 3}}]},
+      "metadata": {"what_it_tests": "Tin từ một người cụ thể → timeline, không social_search."}
+    },
+    {
+      "id": "G02_topic_on_twitter",
+      "phase": "B",
+      "query": "Trên Twitter mọi người đang bàn gì về Claude 4?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {}}]},
+      "metadata": {"what_it_tests": "Chủ đề trên X → social_search."}
+    },
+    {
+      "id": "G03_month_timeframe",
+      "phase": "B",
+      "query": "Tin AI nổi bật trong tháng này trên web",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"topic": "news", "timeframe": "month"}}]},
+      "metadata": {"what_it_tests": "'tháng này' → timeframe=month, chỉ lookup."}
+    },
+    {
+      "id": "G04_missing_url",
+      "phase": "B",
+      "query": "Đọc và tóm tắt bài báo này giúp mình",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"what_it_tests": "Không có URL → clarify, không fetch."}
+    },
+    {
+      "id": "G05_translate_oos",
+      "phase": "B",
+      "query": "Dịch giúp mình đoạn 'Hello world' sang tiếng Việt",
+      "failure_type": "out_of_scope",
+      "expect": {"no_tool": true, "behavior": "refuse"},
+      "metadata": {"what_it_tests": "Dịch thuật ngoài phạm vi research → no tool."}
+    },
+    {
+      "id": "G06_clarify_then_timeline",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Lấy 5 tweet mới nhất giúp mình"},
+        {"role": "user", "content": "Của Bill Gates nhé"},
+        {"role": "user", "content": "Vẫn 5 tweet, không đổi số lượng"}
+      ],
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "BillGates", "limit": 5}}]},
+      "metadata": {"what_it_tests": "Multi-turn: sau khi có handle Bill Gates → timeline limit=5."}
+    },
+    {
+      "id": "G07_limit_correction",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Lấy 8 tweet mới nhất của Sam Altman"},
+        {"role": "user", "content": "Chỉ cần 2 tweet thôi"},
+        {"role": "user", "content": "Vẫn của Sam Altman"}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "sama", "limit": 2}}]},
+      "metadata": {"what_it_tests": "Multi-turn: sửa limit 8→2, giữ sama."}
+    },
+    {
+      "id": "G08_drop_twitter_for_web",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tweet về Gemini trên X?"},
+        {"role": "user", "content": "Thôi không xem X nữa, tìm tin tức web về Gemini"},
+        {"role": "user", "content": "Tin hôm nay thôi"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "Gemini", "topic": "news", "timeframe": "day"}}]},
+      "metadata": {"what_it_tests": "Multi-turn: bỏ Twitter → chỉ lookup news day."}
+    },
+    {
+      "id": "G09_telegram_confirm",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Đăng digest lên Telegram giúp mình"},
+        {"role": "user", "content": "Khoan — hỏi mình xác nhận yes/no trước, chưa gửi"},
+        {"role": "user", "content": "Chỉ cần bước xác nhận thôi"}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "metadata": {"what_it_tests": "Multi-turn: user nhắc boundary → clarify yes_no, không send."}
+    },
+    {
+      "id": "G10_dedupe_items",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "List items: [{\"title\":\"A\",\"url\":\"https://example.com/a\"},{\"title\":\"B\",\"url\":\"https://example.com/a\"},{\"title\":\"C\",\"url\":\"https://example.com/c\"}]"},
+        {"role": "user", "content": "Loại trùng URL trong list trên"},
+        {"role": "user", "content": "Chỉ gọi dedupe by url, không tool khác"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "dedupe", "args": {"by": "url"}}]},
+      "metadata": {"what_it_tests": "Multi-turn: tool dedupe khi user yêu cầu loại trùng URL."}
+    }
+  ]
 }

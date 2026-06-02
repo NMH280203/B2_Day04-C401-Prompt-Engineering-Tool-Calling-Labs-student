@@ -1,0 +1,735 @@
+{
+  "run_id": "v3_B_group_openrouter_20260602T123928691271",
+  "version": "v3",
+  "artifact_version": "v3+pa8ca0c40b759+t29bbb44587af",
+  "prompt_hash": "a8ca0c40b759730f935ed4470af3f7da0d01438791e78ba71eb3947fd0d86469",
+  "tools_hash": "29bbb44587af62b18c4da5da5cf6e466436b008be50f3ab5a9f481e9605a4cb7",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "/Users/mac/Documents/VinAI/B2_Day04-C401-Prompt-Engineering-Tool-Calling-Labs-student/starter_v0/artifacts/system_prompt.md",
+  "tools": "/Users/mac/Documents/VinAI/B2_Day04-C401-Prompt-Engineering-Tool-Calling-Labs-student/starter_v0/artifacts/tools.yaml",
+  "eval_cases": "data/eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "Team eval cases — 5 single-turn + 5 multi-turn.",
+  "generated_at": "2026-06-02T12:39:28",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 8,
+    "case_accuracy": 0.8,
+    "tool_routing_accuracy": 0.9,
+    "argument_accuracy": 0.8,
+    "multiturn_accuracy": 0.75,
+    "failure_counts": {
+      "wrong_tool": 1,
+      "wrong_boundary": 1
+    },
+    "observed_mismatch_counts": {
+      "wrong_arg_value": 1,
+      "missing_tool_call": 1
+    }
+  },
+  "results": [
+    {
+      "id": "G01_timeline_vs_search",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Tin từ một người cụ thể → timeline, không social_search."
+      },
+      "input": "3 tweet mới nhất của Satya Nadella trên X?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "satyanadella",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "satyanadella",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "satyanadella",
+            "limit": 3
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=satyanadella"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_topic_on_twitter",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Chủ đề trên X → social_search."
+      },
+      "input": "Trên Twitter mọi người đang bàn gì về Claude 4?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Claude"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Claude 4",
+              "search_type": "Latest",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "query: expected 'Claude', got 'Claude 4'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "Claude 4",
+            "search_type": "Latest",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=Claude+4&search_type=Latest"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_month_timeframe",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "'tháng này' → timeframe=month, chỉ lookup."
+      },
+      "input": "Tin AI nổi bật trong tháng này trên web",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "month"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "Emerging Risks to Watch: AI, Data Centers, and Autonomous Vehicles - Insurance Journal",
+                "url": "https://www.insurancejournal.com/magazines/mag-features/2026/05/04/868016.htm",
+                "source": "insurancejournal.com",
+                "summary": "# Emerging Risks to Watch: AI, Data Centers, and Autonomous Vehicles. We examine how the expanding use of AI is reshaping the risk landscape for insurance–not only within the industry but across the broader economy and physical world. From cybersecurity and data privacy concerns to the infrastructure required to support AI, to its growing role in autonomous systems, understanding where AI-related risks may emerge is essential to managing them effectively. The wide-ranging–and growing–list of AI capabilities and applications makes it difficult to determine how the transformative technology may impact potential losses across specific insurance lines of business. A recently reported security incident involving data access from a popular enterprise generative AI tool highlights how the mass adoption of large language models (LLMs) and the concentration of the office software market may increase the potential for systemic liability exposure across cyber and professional and management liability lines.",
+                "score": 0.31393534
+              },
+              {
+                "title": "AI Marketing Features - Trend Hunter",
+                "url": "https://www.trendhunter.com/amp/trends/ADWEEK-House-Possible-Group",
+                "source": "trendhunter.com",
+                "summary": "Adweek published a report on agentic AI tools in marketing, featuring insights from the ADWEEK House Possible Group Chat co-hosted with Mutinex and participants from Hershey, Breeze Airways and PubMatic. The discussion focused on agentic AI systems designed to automate workflows, support measurement and connect large datasets with creative and strategic marketing tasks while maintaining human oversight. Speakers shared examples ranging from media-mix modelling that reduced data preparation time from months to hours to AI-assisted campaign workflows that remove repetitive tasks and allow teams to focus on higher-level planning and creativity. For marketers, agentic AI is increasingly positioned as a productivity layer that frees teams to spend more time on strategy, taste and creative judgment rather than manual execution. 3. **AI-assisted Creative Collaboration** — Tools that blend generative models with human oversight to iterate on strategy, tone and creative assets present opportunities to reshape agency-client workflows and redefine creative production timelines.",
+                "score": 0.26265076
+              },
+              {
+                "title": "Agentic AI: Navigating The Evolving Frontier - Forbes",
+                "url": "https://www.forbes.com/sites/chuckbrooks/2026/05/08/agentic-ai-navigating-the-evolving-frontier/",
+                "source": "forbes.com",
+                "summary": "# Agentic AI: Navigating The Evolving Frontier. As 2026 advances, the digital landscape has evolved to be increasingly proactive and “always-on.” Using technology to guide decisions is leading to the delegation of authority. AI systems that function with machine agency are referred to as \"agentic AI.\" These systems can read intent, plan multi-step activities, use tools, access systems, and carry out tasks independently with little assistance from humans. The age of Agentic AI is transformative rather than incremental. Agentic AI is distinct from passive automation. This moment is characterized by operational autonomy and technical innovation. Agentic AI is increasingly establishing itself as the standard decision-making framework in critical systems. The implication is profound: algorithmic velocity is evolving into a form of national power. Agentic AI expedites the move to autonomous risk. Organizations must transition from reactive cybersecurity to \"Security by Design\" to mitigate these assaults. In terms of national security, AI autonomy will provide countries with considerable benefits in defense, intelligence, and cybersecurity.",
+                "score": 0.262353
+              },
+              {
+                "title": "GenAI: Moving to the forefront of claims management - InsuranceNewsNet",
+                "url": "https://insurancenewsnet.com/innarticle/genai-moving-to-the-forefront-of-claims-management",
+                "source": "insurancenewsnet.com",
+                "summary": "# GenAI: Moving to the forefront of claims management - Insurance News | InsuranceNewsNet. HomeNow reading Property and Casualty News. Property and Casualty News RSSGet our newsletter. Claims teams use AI-assisted tools to sort incoming materials, summarize large files and support litigation strategy, while defense counsel uses GenAI to draft outlines, organize chronologies and prepare initial drafts. But for risk managers overseeing claims operations, the question is no longer whether AI should be used, but how to deploy it without introducing new operational, legal or reputational risks. Let’s explore how AI is being used across claims handling and defense, where it delivers tangible value, where it still falls short, and what recent cases and regulatory developments mean for companies managing risk. When it comes to handling and defending claims, AI is already proving most useful in three core areas: document review, case summarization and litigation support.",
+                "score": 0.23532839
+              },
+              {
+                "title": "Acrisure: How AI is the Critical Core Engine for Growth - FinTech Magazine",
+                "url": "https://fintechmagazine.com/news/acrisure-how-ai-is-the-critical-core-engine-for-growth",
+                "source": "fintechmagazine.com",
+                "summary": "# Acrisure: How AI is the Critical Core Engine for Growth. Benjamin Funk, Chief Technology & AI Officer at Acrisure, explains how the company’s implementation of AI at its core is key to its success. For the modern business, AI is more than just a means to an end. Aside from the front-end benefits focused on efficiency, AI is adopting a vital role in every boardroom: strategy. Simply put, AI is more than a tool in fintech. It is rapidly becoming the solution to every company’s growth strategy. In this Q&A with FinTech Magazine, Benjamin Funk, Chief Technology & AI Officer at Acrisure, explains how Acrisure’s AI strategy is the core of its operation. At Acrisure, I’m now leading technology, innovation, and AI across our engineering, data, analytics, product, sales tech and agentic automation teams. Not as an overlay, but as a critical and core engine for how a business ought to run.",
+                "score": 0.23027907
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_missing_url",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Không có URL → clarify, không fetch."
+      },
+      "input": "Đọc và tóm tắt bài báo này giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn vui lòng cung cấp liên kết đến bài báo mà bạn muốn tóm tắt?",
+              "response_type": "text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn vui lòng cung cấp liên kết đến bài báo mà bạn muốn tóm tắt?",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn vui lòng cung cấp liên kết đến bài báo mà bạn muốn tóm tắt?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_translate_oos",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Dịch thuật ngoài phạm vi research → no tool."
+      },
+      "input": "Dịch giúp mình đoạn 'Hello world' sang tiếng Việt",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Đoạn \"Hello world\" dịch sang tiếng Việt là \"Xin chào thế giới\".",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G06_clarify_then_timeline",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Multi-turn: sau khi có handle Bill Gates → timeline limit=5."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 5 tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Bill Gates nhé"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn 5 tweet, không đổi số lượng"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "BillGates",
+              "limit": 5
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "BillGates",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "BillGates",
+            "limit": 5
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=BillGates"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G07_limit_correction",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Multi-turn: sửa limit 8→2, giữ sama."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 8 tweet mới nhất của Sam Altman"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ cần 2 tweet thôi"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn của Sam Altman"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama",
+              "limit": 2
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "sama",
+            "limit": 2
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=sama"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_drop_twitter_for_web",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Multi-turn: bỏ Twitter → chỉ lookup news day."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tweet về Gemini trên X?"
+        },
+        {
+          "role": "user",
+          "content": "Thôi không xem X nữa, tìm tin tức web về Gemini"
+        },
+        {
+          "role": "user",
+          "content": "Tin hôm nay thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "Gemini",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "Gemini",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "Gemini",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "Gemini",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Gemini’s new AI agent is about as good as Google’s demo - The Verge",
+                "url": "https://www.theverge.com/tech/941138/google-gemini-spark-ai-agent-hands-on",
+                "source": "theverge.com",
+                "summary": "# Gemini’s new AI agent is about as good as Google’s demo. Gemini Spark is impressive, but it’s not worth the cost just yet. It also advertises *at the very top* *of the Spark website* that it’s “always under your direction,” that “you choose to turn it on,” and that “it’s designed to check with you before taking major actions.” Given the mounting skepticism toward AI, it’s very much “my ‘not involved in rogue AI’ T-shirt has people asking questions already answered by my shirt.”. For my own version, I asked it to make a calendar event each month ahead of my wife’s birthday and make it hot pink, draft an email to my family about sending them the first episode of the latest season of *Taskmaster*, and create a document with the top things my wife and I need to know about getting our toddler ready for preschool.",
+                "score": 0.3863703
+              },
+              {
+                "title": "I sold my home in 5 days and made a $90K profit — but I didn’t use a broker, I used an AI chatbot - New York Post",
+                "url": "https://nypost.com/2026/06/01/real-estate/i-sold-my-hudson-valley-home-with-ai-and-made-a-90k-profit/",
+                "source": "nypost.com",
+                "summary": "# I sold my home in 5 days and made a $90K profit — but I didn’t use a broker, I used an AI chatbot. A technology reporter for the New York Times, Thompson thought he’d give artificial intelligence a whirl to sell his upstate New York home. He went from listing the spread to an accepted offer in five days and walked away with a nice $90,000 profit. When Thompson and his wife looked to sell their three-bedroom, two-bathroom range in the Hudson Valley, they initially talked to some real estate agents, he wrote. But the agents weren’t optimistic about the pricing and Thompson didn’t want to pay a 3% commission to his agent — and another 3% to the buyer’s agent — to “take a loss on my house,” he wrote. Instead, Thompson used Google’s chatbot, Gemini, to craft a listing for his dwelling.",
+                "score": 0.36779293
+              },
+              {
+                "title": "Horoscopes Today, June 1, 2026 - USA Today",
+                "url": "https://www.usatoday.com/story/life/horoscopes/2026/06/01/horoscopes-today/90349744007/",
+                "source": "usatoday.com",
+                "summary": "# Horoscope Today, June 1, 2026. Here are the horoscopes for today, Monday, June 1, 2026. For full daily and monthly horoscopes as well as expert readings, see our full Horoscopes experience. **What is your zodiac sign?** A guide to what astrology can tell you about yourself. Read the full Gemini Daily Horoscope. ## Cancer (June 22 - July 22). Read the full Cancer Daily Horoscope. Mercury’s entrance to Cancer makes you meditative. Read the full Leo Daily Horoscope. This should be the question on your mind as Mercury enters Cancer. Read the full Virgo Daily Horoscope. Read the full Libra Daily Horoscope. Mercury’s entrance to Cancer makes it impossible for you to be impartial. Read the full Scorpio Daily Horoscope. Mercury’s entrance to Cancer allows you to reveal a secret to your partner. Read the full Sagittarius Daily Horoscope. Read the full Capricorn Daily Horoscope. Read the full Aquarius Daily Horoscope. Read the full Pisces Daily Horoscope. Read the full Taurus Daily Horoscope.",
+                "score": 0.32566044
+              },
+              {
+                "title": "Qualcomm's Computex Keynote in 12 Minutes - Video - CNET",
+                "url": "https://www.cnet.com/videos/qualcomms-computex-keynote-in-12-minutes/",
+                "source": "cnet.com",
+                "summary": "Qualcomm's Computex Keynote in 12 Minutes. Qualcomm CEO Cristiano Amon outlines how agentic AI is revolutionizing the architecture of our everyday devices at Computex 2026. Discover the future of smart technology across mobile, robotics, automotive, and data centers. The 'Mystery Meat' of Google Gemini. Google's Latest Stuff Explained in Human Terms. Is Google's Uncanny Virtual Human a Future Coworker or Concierge? Tech Editors Talk Generative AI Announcements at Google I/O 2026. The New Gemini Isn't the Siri We Need. The Android Show I/O Edition Highlights: Googlebooks, Android Auto and More. Google I/O 2026: New Gemini, Smart Glasses and a Whole New Laptop OS. Here's What to Expect. AI Analysis Reveals Future Job Security, Pitchers Use AI to Study, Best Spring Travel Gadgets | Tech Today. Highlights From Nvidia's GTC 2026 Keynote With Jensen Huang. ### All Things Mobile. ### What the Future. Nvidia's Computex Keynote in 12 Minutes. The Backrooms Explained: Unpacking the Internet's Favorite Liminal Space.",
+                "score": 0.30250487
+              },
+              {
+                "title": "WWCD 2026: Everything Apple is expected to announce on June 8 - Newsweek",
+                "url": "https://www.newsweek.com/wwdc-2026-everything-apple-is-expected-to-announce-on-june-8-12016937",
+                "source": "newsweek.com",
+                "summary": "# WWDC 2026: Everything Apple Is Expected to Announce on June 8. Apple's biggest event of the year lands on Monday, June 8, and for once, the rumor mill has been unusually productive. Apple pre-records the keynote and streams it on Apple.com, YouTube, the Apple TV, and the Apple Developer app, so there's no excuse to miss it. Siri improvements announced at WWDC 2024 were delayed, but a January 2026 partnership with Google, bringing Gemini models into the mix, is what's expected to finally enable the more advanced capabilities. Apple is partnering with Google and plans to use a custom AI model built in collaboration with Google's Gemini team for some of the new Siri features, including the chatbot functionality. Apple is launching its first foldable iPhone this September, and iOS 27 needs to accommodate it - the iPhone Fold will support two apps side-by-side for the first time, with an iPad-like display when open and a standard iPhone layout when closed.",
+                "score": 0.2765298
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G09_telegram_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Lượt cuối nhắc boundary → clarify yes_no trước send (không send ngay)."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Gửi digest này lên kênh Telegram"
+        },
+        {
+          "role": "user",
+          "content": "Ừ đồng ý, gửi đi"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ khi mình đã xác nhận mới được gửi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "text": "digest này",
+              "confirmed": true
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "missing tool call clarify",
+          "extra tool call send"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "digest này",
+            "confirmed": true
+          },
+          "result": {
+            "tool": "send_telegram",
+            "error": "RuntimeError",
+            "message": "Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID env var"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_dedupe_items",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Tool mới dedupe khi user yêu cầu loại trùng URL."
+      },
+      "input": "Loại bỏ mục trùng URL trong list research items sau (gọi dedupe by url): [{\"title\":\"A\",\"url\":\"https://example.com/a\"},{\"title\":\"B\",\"url\":\"https://example.com/a\"},{\"title\":\"C\",\"url\":\"https://example.com/c\"}]",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "dedupe",
+            "args": {
+              "by": "url"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "dedupe",
+            "args": {
+              "items": [
+                {
+                  "title": "A",
+                  "url": "https://example.com/a"
+                },
+                {
+                  "title": "B",
+                  "url": "https://example.com/a"
+                },
+                {
+                  "title": "C",
+                  "url": "https://example.com/c"
+                }
+              ],
+              "by": "url"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "dedupe",
+          "args": {
+            "items": [
+              {
+                "title": "A",
+                "url": "https://example.com/a"
+              },
+              {
+                "title": "B",
+                "url": "https://example.com/a"
+              },
+              {
+                "title": "C",
+                "url": "https://example.com/c"
+              }
+            ],
+            "by": "url"
+          },
+          "result": {
+            "tool": "dedupe",
+            "by": "url",
+            "input_count": 3,
+            "output_count": 2,
+            "items": [
+              {
+                "title": "A",
+                "url": "https://example.com/a"
+              },
+              {
+                "title": "C",
+                "url": "https://example.com/c"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

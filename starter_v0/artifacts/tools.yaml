@@ -1,63 +1,93 @@
-# starter_v0 — tool declarations (intentionally vague).
-# Names and descriptions here are a rough first draft. Routing rules, name->handle
-# mapping, arg conventions (news/timeframe/Top), and the send-confirmation boundary
-# are NOT spelled out anywhere yet. Your job is to make these declarations + the
-# system prompt good enough that the agent routes correctly on the eval.
-#
-# If you rename a tool, keep the name in sync across:
-#   this file  ->  tools/__init__.py (TOOL_FUNCTIONS)  ->  data/eval_base.json + data/eval_research_extension.json
+# Tool declarations — routing tuned for base eval.
 tools:
-  # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: |
+      Ask the user one question and wait for the next turn. Use when required info is missing.
+      - Missing Twitter handle/account for a tweet request → clarify with response_type=text.
+      - Missing URL for "this article" → clarify with response_type=text.
+      - Before send/post/publish to Telegram → clarify with response_type=yes_no (confirm intent), never use text for that case.
+      Do NOT guess handles or URLs.
     parameters:
       type: object
       properties:
         question: {type: string, default: "", description: "Câu hỏi"}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "text=missing info; yes_no=confirm send/post"}
         options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
       required: [question]
 
   - name: timeline
-    description: "Lấy các bài đăng gần đây."
+    description: |
+      Recent posts from ONE Twitter/X account. Requires screenname (handle without @).
+      Use when user names a person/account (e.g. Sam Altman → sama, Elon Musk → elonmusk).
+      Do NOT use if no account is given — use clarify instead.
     parameters:
       type: object
       properties:
-        screenname: {type: string, default: "", description: "Tên tài khoản"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        screenname: {type: string, default: "", description: "Twitter handle, e.g. sama, elonmusk"}
+        limit: {type: integer, default: 5, description: "Số bài đăng"}
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: |
+      Search Twitter/X by keyword/topic (not a specific user). Use when user asks what people say about a topic on Twitter.
+      Do NOT use for web news only. Do NOT combine with lookup unless the user explicitly asks for BOTH web news AND tweets in one request.
+      search_type: Latest (default) or Top when user wants popular/top tweets.
     parameters:
       type: object
       properties:
         query: {type: string, default: "", description: "Từ khóa"}
-        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Top = phổ biến"}
         limit: {type: integer, default: 5, description: "Số lượng"}
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: |
+      Web search via Tavily. Use for news or general web when no URL is provided.
+      topic=news for tin tức/thời sự; topic=general otherwise.
+      timeframe: day (hôm nay), week (tuần này), month, year.
+      query should be the subject keyword only (e.g. AI, robotics, OpenAI).
+      Use ONLY lookup (no social_search) unless user explicitly wants both web and Twitter.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
+        query: {type: string, default: "", description: "Chủ đề tìm kiếm"}
+        topic: {type: string, enum: [general, news], default: "general", description: "news cho tin tức"}
         timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
         max_results: {type: integer, default: 5, description: "Số kết quả"}
       required: [query]
 
   - name: fetch
-    description: "Lấy nội dung từ một địa chỉ."
+    description: Read full content of a specific URL the user provided. Do not use for missing URLs — use clarify.
     parameters:
       type: object
       properties:
-        url: {type: string, default: "", description: "Địa chỉ"}
+        url: {type: string, default: "", description: "URL đầy đủ"}
       required: [url]
 
+  - name: dedupe
+    description: |
+      Remove duplicate items from a list (same URL or title). Local formatter only.
+      Use when the user asks to deduplicate/drop duplicates before format or digest.
+      Requires items array from prior tool results.
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Items to deduplicate"
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+        by: {type: string, enum: [url, title], default: "url", description: "Dedupe key"}
+      required: [items]
+
   - name: format
-    description: "Trình bày dữ liệu đã có thành văn bản."
+    description: Format a list of items into a markdown digest. Use after collecting items from other tools.
     parameters:
       type: object
       properties:
@@ -77,18 +107,20 @@ tools:
         headline: {type: string, default: "", description: "Tiêu đề"}
       required: [items, template]
 
-  # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi một đoạn văn bản đi."
+    description: |
+      Post text to Telegram. Side-effect tool.
+      Only call with confirmed=true after user explicitly agreed in conversation.
+      For "đăng/gửi/post lên Telegram" requests, call clarify with yes_no first — never send on first turn.
     parameters:
       type: object
       properties:
         text: {type: string, default: "", description: "Nội dung"}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận"}
+        confirmed: {type: boolean, default: false, description: "true only after user confirmed"}
       required: [text]
 
   - name: policy
-    description: "Tìm trong tài liệu nội bộ."
+    description: Search internal company policy markdown. Use for compliance, publishing, citation, privacy, tool usage rules.
     parameters:
       type: object
       properties:
@@ -98,7 +130,7 @@ tools:
       required: [query]
 
   - name: papers
-    description: "Tìm bài báo khoa học."
+    description: Search arXiv papers by keyword. No API key required.
     parameters:
       type: object
       properties:
@@ -108,11 +140,11 @@ tools:
       required: [query]
 
   - name: paper_text
-    description: "Lấy nội dung text của một bài báo."
+    description: Extract text from an arXiv paper by ID or URL.
     parameters:
       type: object
       properties:
-        arxiv_url: {type: string, default: "", description: "ID hoặc địa chỉ"}
+        arxiv_url: {type: string, default: "", description: "arXiv ID hoặc URL"}
         max_pages: {type: integer, default: 5, description: "Số trang"}
         max_chars: {type: integer, default: 8000, description: "Số ký tự"}
       required: [arxiv_url]
