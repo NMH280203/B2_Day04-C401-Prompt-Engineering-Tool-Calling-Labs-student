@@ -9,6 +9,25 @@
             Nguyễn Đăng Khương - 2A202600584.
 - Provider/model: openrouter / openai/gpt-4o-mini
 
+### Phân công công việc
+
+- Nguyễn Mạnh Hiếu (2A202600887):
+    - Chịu trách nhiệm chính về prompt engineering và cập nhật `system_prompt.md`.
+    - Viết phần "Reflection" và tổng hợp kết quả thử nghiệm.
+    - Kiểm tra và xác nhận các run files đầu ra (`runs/`) và transcript.
+
+- Mai Đức Vinh (2A202600587):
+    - Chịu trách nhiệm cấu hình và mô tả tools trong `tools.yaml`.
+    - Thực hiện và ghi chép các thay đổi liên quan tới routing và argument cho tools.
+    - Chuẩn bị và kiểm thử các case đánh giá nhóm (Group Eval).
+
+- Nguyễn Đăng Khương (2A202600584):
+    - Triển khai phần UI demo (`ui/app.py`) và tài liệu hướng dẫn `ui/README.md`.
+    - Xử lý phần scripts (như `scripts/parse_runs.py`) và hỗ trợ debug kết nối API.
+    - Ghi lại evidence cho Bonus và Live Chat Evidence.
+
+Ghi chú: các nhiệm vụ được phân chia công bằng theo năng lực; mỗi thành viên chịu trách nhiệm chính cho các mục nêu trên nhưng vẫn hỗ trợ chéo khi cần (ví dụ: fix RapidAPI, test Telegram send).
+
 ## Final Metrics
 
 - Final version: v3
