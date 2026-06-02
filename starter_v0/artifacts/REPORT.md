@@ -23,7 +23,7 @@ Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng
 
 Ví dụ ngắn (1 dòng): Từ câu hỏi người dùng, agent chọn tool phù hợp (timeline/social_search/lookup/fetch), thu thập nội dung, format thành digest và chờ xác nhận trước khi gửi.
 
-**Link dùng thử (deploy):**
+**Link dùng thử (deploy):https://touch-from-commit-regularly.trycloudflare.com **
 
 > Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
 >
