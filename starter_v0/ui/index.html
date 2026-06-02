@@ -749,25 +749,45 @@ async function sendMessage() {
   showThinking();
 
   try {
-    const res  = await fetch('/api/chat', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text })
     });
-    const data = await res.json();
+
+    // Safe parse: read text first, then JSON.parse — catches Cloudflare HTML pages
+    const raw = await res.text();
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch(_) {
+      removeThinking();
+      const isCF = raw.includes('cloudflare') || raw.includes('challenge') || raw.trim().startsWith('<');
+      if (isCF) {
+        appendMsg('agent',
+          'Cloudflare đang xác minh kết nối tunnel.<br>' +
+          '<strong>Tải lại trang (F5)</strong>, chờ 2-3 giây rồi thử lại.',
+          null, null);
+      } else {
+        appendMsg('agent',
+          'Server trả phản hồi không hợp lệ. Thử lại sau vài giây.',
+          null, null);
+      }
+      document.getElementById('send-btn').disabled = false;
+      input.focus();
+      return;
+    }
+
     removeThinking();
-
-    // Sidebar log
     (data.tool_calls || []).forEach(tc => addToolLog(tc.name, tc.args));
-
     appendMsg('agent',
       esc(data.reply || '(trống)').replace(/\n/g,'<br>'),
       data.tool_calls,
-      data.tool_events   // ← full events with result
+      data.tool_events
     );
   } catch(e) {
     removeThinking();
-    appendMsg('agent', `⚠️ Lỗi kết nối: ${esc(e.message)}`, null, null);
+    appendMsg('agent', `Loi ket noi: ${esc(e.message)}`, null, null);
   }
 
   document.getElementById('send-btn').disabled = false;

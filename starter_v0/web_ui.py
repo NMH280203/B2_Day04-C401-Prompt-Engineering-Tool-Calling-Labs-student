@@ -90,6 +90,16 @@ def init_state(args: argparse.Namespace) -> None:
 
 # ── Routes ─────────────────────────────────────────────────────────────────────
 
+@app.after_request
+def add_headers(response):
+    """Ensure JSON responses are properly typed and CORS-friendly for tunnel access."""
+    if request.path.startswith("/api/"):
+        response.headers["Content-Type"] = "application/json; charset=utf-8"
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
 @app.route("/")
 def index():
     return send_from_directory(ROOT / "ui", "index.html")
@@ -104,12 +114,16 @@ def api_info():
     })
 
 
-@app.route("/api/chat", methods=["POST"])
+@app.route("/api/chat", methods=["POST", "OPTIONS"])
 def api_chat():
-    body = request.get_json(force=True)
+    # Handle CORS preflight (needed for cross-origin requests via tunnel)
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True})
+
+    body = request.get_json(force=True, silent=True) or {}
     user_text = (body.get("message") or "").strip()
     if not user_text:
-        return jsonify({"error": "empty message"}), 400
+        return jsonify({"error": "empty message", "reply": "Tin nhắn trống.", "status": "error", "tool_calls": [], "tool_events": []}), 400
 
     _state["turn_index"] += 1
     history: list[dict[str, str]] = _state["history"]

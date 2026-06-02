@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
@@ -8,6 +9,21 @@ from email.mime.text import MIMEText
 from typing import Any
 
 from tools._shared import TIMEOUT, err
+
+# RFC-5322 simplified — catches most typos (missing @, missing domain, spaces…)
+_EMAIL_RE = re.compile(
+    r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
+)
+
+
+def _validate_addresses(raw: str) -> list[str]:
+    """Return list of invalid addresses found in a comma-separated string."""
+    bad = []
+    for addr in raw.split(","):
+        addr = addr.strip()
+        if addr and not _EMAIL_RE.match(addr):
+            bad.append(addr)
+    return bad
 
 
 def send_email(
@@ -21,7 +37,40 @@ def send_email(
     Send an email via SMTP (Gmail by default).
     Requires env vars: EMAIL_SENDER, EMAIL_PASSWORD, and optionally EMAIL_SMTP_HOST / EMAIL_SMTP_PORT.
     Always requires confirmed=True before actually sending.
+    Validates email format before sending; returns invalid_email error if address is malformed.
     """
+
+    # ── Validate email format FIRST (before confirmation check) ──────────────
+    if to:
+        bad_to = _validate_addresses(to)
+        if bad_to:
+            return {
+                "tool": "send_email",
+                "error": "invalid_email",
+                "invalid_addresses": bad_to,
+                "message": (
+                    f"Địa chỉ email không hợp lệ: {', '.join(bad_to)}. "
+                    "Vui lòng kiểm tra lại (phải có dạng user@domain.com)."
+                ),
+                "action_required": "ask_user_to_correct_email",
+            }
+
+    if cc:
+        bad_cc = _validate_addresses(cc)
+        if bad_cc:
+            return {
+                "tool": "send_email",
+                "error": "invalid_email",
+                "invalid_addresses": bad_cc,
+                "field": "cc",
+                "message": (
+                    f"Địa chỉ CC không hợp lệ: {', '.join(bad_cc)}. "
+                    "Vui lòng kiểm tra lại."
+                ),
+                "action_required": "ask_user_to_correct_email",
+            }
+
+    # ── Confirmation gate ────────────────────────────────────────────────────
     if not confirmed:
         return {
             "tool": "send_email",
@@ -35,7 +84,7 @@ def send_email(
             "message": "Chưa gửi — cần xác nhận từ người dùng trước khi gửi email.",
         }
 
-    # Validate required fields
+    # ── Validate required fields ─────────────────────────────────────────────
     if not to:
         return {"tool": "send_email", "error": "missing_field", "message": "Thiếu địa chỉ người nhận (to)."}
     if not subject:
@@ -63,7 +112,6 @@ def send_email(
         if cc:
             msg["Cc"] = cc
 
-        # Add plain-text and HTML parts
         msg.attach(MIMEText(body, "plain", "utf-8"))
 
         recipients = [addr.strip() for addr in to.split(",")]
@@ -84,12 +132,29 @@ def send_email(
             "chars_sent": len(body),
         }
 
+    except smtplib.SMTPRecipientsRefused as exc:
+        # Server rejected one or more recipients — address doesn't exist
+        refused = list(exc.recipients.keys())
+        return {
+            "tool": "send_email",
+            "error": "recipient_refused",
+            "refused_addresses": refused,
+            "message": (
+                f"Máy chủ từ chối địa chỉ: {', '.join(refused)}. "
+                "Địa chỉ email có thể không tồn tại."
+            ),
+            "action_required": "ask_user_to_correct_email",
+        }
+
     except smtplib.SMTPAuthenticationError:
         return {
             "tool": "send_email",
             "error": "auth_failed",
-            "message": "Xác thực SMTP thất bại. Kiểm tra EMAIL_SENDER và EMAIL_PASSWORD. "
-                       "Với Gmail, dùng App Password (không phải mật khẩu thường).",
+            "message": (
+                "Xác thực SMTP thất bại. Kiểm tra EMAIL_SENDER và EMAIL_PASSWORD. "
+                "Với Gmail, dùng App Password (không phải mật khẩu thường)."
+            ),
         }
+
     except Exception as exc:
         return err("send_email", exc)
