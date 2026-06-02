@@ -1,70 +1,203 @@
-# starter_v0 — tool declarations (intentionally vague).
-# Names and descriptions here are a rough first draft. Routing rules, name->handle
-# mapping, arg conventions (news/timeframe/Top), and the send-confirmation boundary
-# are NOT spelled out anywhere yet. Your job is to make these declarations + the
-# system prompt good enough that the agent routes correctly on the eval.
-#
-# If you rename a tool, keep the name in sync across:
-#   this file  ->  tools/__init__.py (TOOL_FUNCTIONS)  ->  data/eval_base.json + data/eval_research_extension.json
+# starter_v0 — tool declarations
+# Tool names MUST stay in sync with:
+#   tools/__init__.py (TOOL_FUNCTIONS)  ->  data/eval_base.json + data/eval_research_extension.json
 tools:
   # ---------------- Core tools ----------------
+
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: >
+      Ask the user a clarifying question when critical information is missing
+      or before performing any write/send action.
+
+      Use this tool when:
+      - The user wants someone's tweets but did NOT specify whose account (missing handle/name).
+        Ask: "Bạn muốn xem tweet của ai? Vui lòng cung cấp tên hoặc @handle."
+      - The user says "bài này", "this article", or "bài viết này" with NO URL provided.
+        Ask: "Bạn có thể cho mình link bài viết đó không?"
+      - The user asks you to send, post, or publish something — ALWAYS confirm with yes_no first.
+        Ask: "Bạn có chắc muốn gửi nội dung này không?" NEVER call send without this confirmation.
+
+      Do NOT use clarify for out-of-scope requests (refuse instead).
+      Do NOT use clarify when you already have all required information.
     parameters:
       type: object
       properties:
-        question: {type: string, default: "", description: "Câu hỏi"}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
-        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
+        question:
+          type: string
+          description: "The clarifying question to ask the user."
+        response_type:
+          type: string
+          enum: [text, yes_no, choice]
+          default: "text"
+          description: >
+            Use 'text' when asking for missing info (handle, URL, topic).
+            Use 'yes_no' when asking for confirmation before a write/send action.
+            Use 'choice' when presenting options.
+        options:
+          type: array
+          default: []
+          items: {type: string}
+          description: "List of options when response_type is 'choice'."
       required: [question]
 
   - name: timeline
-    description: "Lấy các bài đăng gần đây."
+    description: >
+      Fetch recent tweets from a SPECIFIC USER's Twitter/X timeline.
+
+      Use this tool when the user asks about tweets BY a named person:
+      - "Tweet mới nhất của Sam Altman" → screenname: sama
+      - "10 tweet mới nhất của Elon Musk" → screenname: elonmusk, limit: 10
+      - "Tweet của Andrej Karpathy" → screenname: karpathy
+      - "Tweet của Yann LeCun" → screenname: ylecun
+
+      Known name → handle mappings (use exact handle, lowercase):
+        Sam Altman       → sama
+        Elon Musk        → elonmusk
+        Andrej Karpathy  → karpathy
+        Yann LeCun       → ylecun
+        Greg Brockman    → gbrockman
+
+      IMPORTANT:
+      - **CRITICAL: If the user mentions no specific person at all** (e.g., "tweet mới nhất giúp mình" with no name),
+        do NOT guess a person. Use 'clarify' tool to ask who they want.
+      - If a name is provided but you do NOT know the handle, use 'clarify' to ask.
+      - If the user wants tweets about a TOPIC (not a person), use 'social_search' instead.
+      - Extract the numeric limit from the user's words: "10 tweet" → limit=10, "3 tweet" → limit=3.
     parameters:
       type: object
       properties:
-        screenname: {type: string, default: "", description: "Tên tài khoản"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        screenname:
+          type: string
+          description: "Twitter/X handle (without @). E.g., 'sama', 'elonmusk', 'karpathy'."
+        limit:
+          type: integer
+          default: 5
+          description: "Number of recent tweets to fetch. Extract from user's request if specified."
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: >
+      Search Twitter/X for tweets about a TOPIC or keyword (not a specific user).
+
+      Use this tool when the user wants to see what people are saying about a subject:
+      - "Mọi người đang bàn gì về GPT-5?" → query: GPT-5
+      - "Tweets về AI" → query: AI
+      - "Tìm tweet về OpenAI" → query: OpenAI
+
+      Do NOT use this for fetching a specific person's tweets — use 'timeline' instead.
+
+      search_type argument:
+      - "phổ biến", "top", "viral", "nổi tiếng nhất", "popular" → search_type: Top
+      - "mới nhất", "latest", default → search_type: Latest
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Từ khóa"}
-        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        query:
+          type: string
+          description: "Search keyword or phrase about the topic."
+        search_type:
+          type: string
+          enum: [Latest, Top]
+          default: "Latest"
+          description: >
+            'Top' for popular/viral tweets (user says 'phổ biến', 'top', 'viral').
+            'Latest' for most recent tweets (default).
+        limit:
+          type: integer
+          default: 5
+          description: "Number of tweets to return."
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: >
+      Search the web for news articles or general information when NO specific URL is provided.
+
+      Use this tool for:
+      - News: "Tin tức AI hôm nay", "Tin công nghệ tuần này"
+      - General web search: "Tìm thông tin về X"
+
+      Do NOT use this when the user already gives a URL — use 'fetch' instead.
+
+      query argument: Extract ONLY the core topic keyword. Do NOT include context words like
+      "tin tức", "news", "bài viết", "hôm nay", "tuần này" in the query string.
+      These belong in 'topic' and 'timeframe' instead.
+      Examples:
+      - "Tin tức AI hôm nay" → query="AI", topic=news, timeframe=day
+      - "Tìm trên web tin AI hôm nay" → query="AI", topic=news, timeframe=day
+      - "Tin công nghệ tuần này" → query="công nghệ", topic=news, timeframe=week
+      - "Tin tức về OpenAI" → query="OpenAI", topic=news
+
+      topic argument:
+      - "tin tức", "news", "hôm nay", "tuần này", any time-sensitive content → topic: news
+      - Background info, general knowledge → topic: general
+
+      timeframe argument — map natural language carefully:
+      - "hôm nay", "today", "ngày hôm nay" → timeframe: day
+      - "tuần này", "this week", "7 ngày" → timeframe: week
+      - "tháng này", "this month" → timeframe: month
+      - "năm nay", "this year" → timeframe: year
+      - No time cue specified → default: week
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
-        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
-        max_results: {type: integer, default: 5, description: "Số kết quả"}
+        query:
+          type: string
+          description: "Search query for the web."
+        topic:
+          type: string
+          enum: [general, news]
+          default: "general"
+          description: >
+            'news' for current events, recent news, time-sensitive info.
+            'general' for background knowledge or non-time-sensitive queries.
+        timeframe:
+          type: string
+          enum: [day, week, month, year]
+          default: "week"
+          description: >
+            Time range for news results.
+            'day' = hôm nay / today.
+            'week' = tuần này / this week.
+            'month' = tháng này / this month.
+            'year' = năm nay / this year.
+        max_results:
+          type: integer
+          default: 5
+          description: "Maximum number of results to return."
       required: [query]
 
   - name: fetch
-    description: "Lấy nội dung từ một địa chỉ."
+    description: >
+      Fetch and read the full content of a webpage from a specific URL.
+
+      Use this tool when the user provides a concrete URL (starting with http:// or https://).
+      Examples:
+      - "Tóm tắt bài này: https://openai.com/blog/gpt-5" → url: https://openai.com/blog/gpt-5
+      - "Đọc bài viết này https://anthropic.com/news/claude" → url: https://anthropic.com/news/claude
+
+      IMPORTANT: Only use the exact URL given by the user. Do NOT invent or guess a URL.
+      If no URL is provided, use 'clarify' to ask for it.
     parameters:
       type: object
       properties:
-        url: {type: string, default: "", description: "Địa chỉ"}
+        url:
+          type: string
+          description: "The exact URL to fetch. Must start with http:// or https://."
       required: [url]
 
   - name: format
-    description: "Trình bày dữ liệu đã có thành văn bản."
+    description: >
+      Render a list of collected items into a formatted digest, newsletter, or summary text.
+
+      Use this tool AFTER you have already gathered data from other tools (lookup, fetch, etc.).
+      Do NOT use this as the first tool call.
     parameters:
       type: object
       properties:
         items:
           type: array
           default: []
-          description: "Danh sách item"
+          description: "List of items to format."
           items:
             type: object
             properties:
@@ -73,46 +206,149 @@ tools:
               source: {type: string}
               summary: {type: string}
               section: {type: string}
-        template: {type: string, enum: [brief, sections, bullets, thread, daily_ai_vn], default: "sections", description: "Khuôn"}
-        headline: {type: string, default: "", description: "Tiêu đề"}
+        template:
+          type: string
+          enum: [brief, sections, bullets, thread, daily_ai_vn]
+          default: "sections"
+          description: "Output format template."
+        headline:
+          type: string
+          default: ""
+          description: "Optional headline for the digest."
       required: [items, template]
 
   # ---------------- Bonus tools ----------------
+
   - name: send
-    description: "Gửi một đoạn văn bản đi."
+    description: >
+      Send a text message or post (e.g., to Telegram).
+
+      CRITICAL: NEVER call this tool directly without user confirmation.
+      The system prompt requires calling 'clarify' with response_type=yes_no FIRST.
+      Only call send after the user has explicitly confirmed (confirmed: true).
+
+      This is a destructive/write action — always gate it behind clarify.
     parameters:
       type: object
       properties:
-        text: {type: string, default: "", description: "Nội dung"}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận"}
+        text:
+          type: string
+          description: "The content to send."
+        confirmed:
+          type: boolean
+          default: false
+          description: "Must be true only after user explicitly confirmed via clarify."
       required: [text]
 
   - name: policy
-    description: "Tìm trong tài liệu nội bộ."
+    description: >
+      Search the company's internal policy documents for rules, guidelines, or policies.
+
+      Use this when the user asks about company rules, what is allowed/not allowed,
+      citation guidelines, data privacy, or publishing policies.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        policy_area: {type: string, enum: [all, ai_research, source_citation, data_privacy, external_publishing, tool_usage], default: "all", description: "Nhóm"}
-        top_k: {type: integer, default: 3, description: "Số mục"}
+        query:
+          type: string
+          description: "What policy or rule to look up."
+        policy_area:
+          type: string
+          enum: [all, ai_research, source_citation, data_privacy, external_publishing, tool_usage]
+          default: "all"
+          description: "The policy area to filter by."
+        top_k:
+          type: integer
+          default: 3
+          description: "Number of top policy sections to return."
       required: [query]
 
   - name: papers
-    description: "Tìm bài báo khoa học."
+    description: >
+      Search for academic research papers on arXiv by topic or keyword.
+
+      Use this when the user wants to find research papers, academic articles, or scientific literature.
+      Examples: "Tìm paper về diffusion models", "Các bài báo mới nhất về LLM"
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Từ khóa"}
-        max_results: {type: integer, default: 5, description: "Số lượng"}
-        sort_by: {type: string, enum: [relevance, lastUpdatedDate, submittedDate], default: "relevance", description: "Sắp xếp"}
+        query:
+          type: string
+          description: "Search query for academic papers."
+        max_results:
+          type: integer
+          default: 5
+          description: "Maximum number of papers to return."
+        sort_by:
+          type: string
+          enum: [relevance, lastUpdatedDate, submittedDate]
+          default: "relevance"
+          description: "Sort order for results."
       required: [query]
 
   - name: paper_text
-    description: "Lấy nội dung text của một bài báo."
+    description: >
+      Retrieve and read the full text content of a specific arXiv paper.
+
+      Use this when the user wants to read or summarize a specific arXiv paper
+      and provides an arXiv ID or URL. Use 'papers' first to find papers if no ID is given.
     parameters:
       type: object
       properties:
-        arxiv_url: {type: string, default: "", description: "ID hoặc địa chỉ"}
-        max_pages: {type: integer, default: 5, description: "Số trang"}
-        max_chars: {type: integer, default: 8000, description: "Số ký tự"}
+        arxiv_url:
+          type: string
+          description: "arXiv paper ID (e.g., '2301.07041') or full arXiv URL."
+        max_pages:
+          type: integer
+          default: 5
+          description: "Maximum number of pages to read."
+        max_chars:
+          type: integer
+          default: 8000
+          description: "Maximum number of characters to return."
       required: [arxiv_url]
+
+  - name: send_email
+    description: >
+      Send an email to one or more recipients via SMTP.
+
+      Use this tool when the user explicitly asks to send, compose, or draft an email.
+      Examples:
+      - "Gửi email cho nam@company.com tóm tắt kết quả tìm kiếm"
+      - "Email cho team về tin AI hôm nay"
+
+      CRITICAL — ALWAYS gate with clarify before calling send_email:
+      1. If 'to' (recipient email) is missing → use clarify (response_type=text) to ask.
+      2. If 'subject' is missing → use clarify (response_type=text) to ask.
+      3. ALWAYS call clarify (response_type=yes_no) to confirm before sending, even if you have all info.
+         Show the recipient, subject, and body preview in the confirmation question.
+      4. Only call send_email with confirmed=true AFTER the user says yes.
+
+      This tool requires EMAIL_SENDER and EMAIL_PASSWORD in the .env file.
+      If those are missing, it will return an error with setup instructions.
+    parameters:
+      type: object
+      properties:
+        to:
+          type: string
+          description: >
+            Recipient email address(es). Multiple addresses separated by commas.
+            Example: "alice@example.com" or "alice@example.com, bob@example.com"
+        subject:
+          type: string
+          description: "Email subject line. Should be concise and descriptive."
+        body:
+          type: string
+          description: "Email body content (plain text). Can be multi-line."
+        cc:
+          type: string
+          default: ""
+          description: "CC email addresses, comma-separated. Leave empty if not needed."
+        confirmed:
+          type: boolean
+          default: false
+          description: >
+            Must be true only after the user has explicitly confirmed sending.
+            Always start with confirmed=false to get a preview, then ask the user,
+            then call again with confirmed=true if they agree.
+      required: [to, subject, body]
